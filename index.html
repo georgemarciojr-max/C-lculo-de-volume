@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>⚓ Gerador de Distribuição Diária de Dragagem</title>
+  <!-- Biblioteca ExcelJS para gerar planilha .xlsx estilizada com fórmulas nativas -->
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+  <style>
+    :root {
+      --navy: #1F4E78;
+      --navy-dark: #153654;
+      --navy-light: #D9E1F2;
+      --bg: #F4F7FA;
+      --card: #FFFFFF;
+      --text: #1E293B;
+      --muted: #64748B;
+      --border: #E2E8F0;
+      --success-bg: #ECFDF5;
+      --success-text: #065F46;
+      --success-border: #A7F3D0;
+      --error-bg: #FEF2F2;
+      --error-text: #991B1B;
+      --error-border: #FECACA;
+      --info-bg: #EFF6FF;
+      --info-text: #1E40AF;
+      --info-border: #BFDBFE;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 24px 16px 48px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+      color: #FFF;
+      padding: 24px 28px;
+      border-radius: 14px;
+      box-shadow: 0 4px 15px rgba(31, 78, 120, 0.18);
+      margin-bottom: 24px;
+    }
+
+    header h1 {
+      font-size: 1.65rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    header p {
+      color: #E2E8F0;
+      font-size: 0.95rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 22px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      font-size: 1.1rem;
+      color: var(--navy);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--navy-light);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+
+    .hint {
+      font-size: 0.76rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      color: var(--text);
+      background: #FFF;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--navy);
+      box-shadow: 0 0 0 3px rgba(31, 78, 120, 0.15);
+    }
+
+    .radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .radio-pill {
+      flex: 1;
+      min-width: 240px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      transition: all 0.15s;
+      background: #F8FAFC;
+    }
+
+    .radio-pill.active {
+      border-color: var(--navy);
+      background: #EFF6FF;
+    }
+
+    .radio-pill input {
+      margin-top: 4px;
+      accent-color: var(--navy);
+    }
+
+    .radio-pill-title {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--navy-dark);
+    }
+
+    .radio-pill-desc {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .banner-info {
+      background: var(--info-bg);
+      border: 1px solid var(--info-border);
+      color: var(--info-text);
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .banner-error {
+      background: var(--error-bg);
+      border: 1px solid var(--error-border);
+      color: var(--error-text);
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .audit-bar {
+      background: var(--success-bg);
+      border: 1px solid var(--success-border);
+      color: var(--success-text);
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      margin-bottom: 18px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
+
+    .audit-item strong {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      opacity: 0.85;
+    }
+
+    .audit-item span {
+      font-size: 0.98rem;
+      font-weight: 700;
+    }
+
+    .actions-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 18px;
+      align-items: center;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 20px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.1s, background-color 0.15s, box-shadow 0.15s;
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    .btn-primary {
+      background-color: var(--navy);
+      color: #FFF;
+      box-shadow: 0 2px 6px rgba(31, 78, 120, 0.25);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--navy-dark);
+    }
+
+    .btn-success {
+      background-color: #107C41;
+      color: #FFF;
+      box-shadow: 0 2px 6px rgba(16, 124, 65, 0.25);
+    }
+
+    .btn-success:hover {
+      background-color: #0B5C30;
+    }
+
+    .btn-outline {
+      background-color: #FFF;
+      color: var(--navy);
+      border: 1px solid var(--navy);
+      padding: 9px 14px;
+      font-size: 0.84rem;
+    }
+
+    .btn-outline:hover {
+      background-color: #EFF6FF;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      max-height: 540px;
+      overflow-y: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      white-space: nowrap;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      background-color: var(--navy);
+      color: #FFF;
+      padding: 12px 14px;
+      text-align: center;
+      font-weight: 600;
+      z-index: 2;
+    }
+
+    tbody td {
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--border);
+      text-align: right;
+    }
+
+    tbody td.center {
+      text-align: center;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #F8FAFC;
+    }
+
+    tbody tr:hover {
+      background-color: #EFF6FF;
+    }
+
+    tfoot td {
+      position: sticky;
+      bottom: 0;
+      background-color: var(--navy-light);
+      color: var(--navy-dark);
+      font-weight: 700;
+      padding: 11px 14px;
+      text-align: right;
+      border-top: 2px solid var(--navy);
+    }
+
+    tfoot td.center {
+      text-align: center;
+    }
+
+    .formula-box {
+      background: #F8FAFC;
+      border-left: 4px solid var(--navy);
+      padding: 12px 16px;
+      font-size: 0.83rem;
+      color: #334155;
+      border-radius: 0 8px 8px 0;
+      margin-top: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>⚓ Gerador de Distribuição Diária de Dragagem</h1>
+    <p>Sorteio aleatório controlado por limites com fechamento matemático exato de 100% do volume e das estacas.</p>
+  </header>
+
+  <div class="grid-2">
+    <!-- Coluna 1: Parâmetros Gerais -->
+    <div class="card" style="margin-bottom: 0;">
+      <h2>📋 Parâmetros Gerais</h2>
+      <div class="form-group">
+        <label for="mesAno">Mês / Ano de Referência</label>
+        <input type="text" id="mesAno" value="Setembro / 2026" />
+      </div>
+      <div class="form-group">
+        <label for="dataInicio">Data Inicial</label>
+        <input type="date" id="dataInicio" value="2026-09-01" />
+      </div>
+      <div class="form-group">
+        <label for="dataFim">Data Final</label>
+        <input type="date" id="dataFim" value="2026-09-30" />
+      </div>
+    </div>
+
+    <!-- Coluna 2: Parâmetros do Canal -->
+    <div class="card" style="margin-bottom: 0;">
+      <h2>📏 Parâmetros do Canal e Dragagem</h2>
+      <div class="form-group">
+        <label for="volumeTotal">Volume Total Retirado (m³)</label>
+        <input type="number" id="volumeTotal" value="45000" min="1" step="500" />
+      </div>
+      <div class="form-group">
+        <label for="estacaInicial">Estaca Inicial (m)</label>
+        <input type="number" id="estacaInicial" value="0" min="0" step="10" />
+      </div>
+      <div class="form-group">
+        <label for="estacaFinal">Estaca Final (m)</label>
+        <input type="number" id="estacaFinal" value="1500" min="0" step="10" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Resumo de Médias Operacionais -->
+  <div class="banner-info" id="resumoBanner">
+    <div id="textoMedias">Calculando parâmetros...</div>
+    <button type="button" class="btn-outline" id="btnAutoLimites">
+      ⚡ Ajustar Limites Automaticamente (±25% da Média)
+    </button>
+  </div>
+
+  <!-- Configuração do Sorteio Aleatório -->
+  <div class="card">
+    <h2>🎲 Configuração do Sorteio e Limites de Coerência</h2>
+
+    <div class="radio-group">
+      <label class="radio-pill active" id="pillModoVolume">
+        <input type="radio" name="modoSorteio" value="volume_diario" checked />
+        <div>
+          <div class="radio-pill-title">Opção 1: Limitar por Volume Diário (m³/dia)</div>
+          <div class="radio-pill-desc">Você define o mínimo e máximo de m³ sorteados por dia. O avanço de estaca acompanha de forma coerente.</div>
+        </div>
+      </label>
+
+      <label class="radio-pill" id="pillModoEstaca">
+        <input type="radio" name="modoSorteio" value="volume_metro" />
+        <div>
+          <div class="radio-pill-title">Opção 2: Limitar por Volume por Estaca/Metro (m³/m)</div>
+          <div class="radio-pill-desc">Você define o intervalo de m³ por metro linear de canal e o sistema calcula os volumes diários.</div>
+        </div>
+      </label>
+    </div>
+
+    <div class="grid-3">
+      <div class="form-group">
+        <label id="lblMin" for="limiteMin">Volume Mínimo por Dia (m³)</label>
+        <input type="number" id="limiteMin" value="1125" step="25" />
+        <div class="hint" id="hintMin">Deve ser menor ou igual à média diária.</div>
+      </div>
+
+      <div class="form-group">
+        <label id="lblMax" for="limiteMax">Volume Máximo por Dia (m³)</label>
+        <input type="number" id="limiteMax" value="1875" step="25" />
+        <div class="hint" id="hintMax">Deve ser maior ou igual à média diária.</div>
+      </div>
+
+      <div class="form-group">
+        <label for="variacaoEstaca">Oscilação da Relação m³/Metro (%)</label>
+        <input type="number" id="variacaoEstaca" value="20" min="3" max="45" step="1" />
+        <div class="hint">Garante que cada trecho tenha densidade (m³/m) diferente sem distorções irreais.</div>
+      </div>
+    </div>
+
+    <div class="formula-box">
+      <strong>📐 Regra de Coerência Ativa:</strong> Todos os dias (do 1º ao último) respeitam estritamente o intervalo <code>[Mínimo, Máximo]</code>. O avanço diário é acoplado ao volume do dia com variação controlada de assoreamento, garantindo que <code>Soma(Volumes) = Volume Total</code> e <code>Estaca Final do Último Dia = Estaca Final</code> sem erros de arredondamento.
+    </div>
+  </div>
+
+  <!-- Alerta de Erro Matemático -->
+  <div class="banner-error" id="erroBanner"></div>
+
+  <!-- Área de Resultados e Tabela -->
+  <div class="card" id="cardResultados">
+    <h2>📊 Pré-visualização da Distribuição Sorteada</h2>
+
+    <div class="actions-bar">
+      <button type="button" class="btn-primary" id="btnSortear">
+        🎲 Sortear Nova Distribuição
+      </button>
+      <button type="button" class="btn-success" id="btnBaixarExcel">
+        📥 Baixar Planilha Excel (.xlsx)
+      </button>
+    </div>
+
+    <!-- Barra de Auditoria dos Dados Sorteados -->
+    <div class="audit-bar" id="auditBar"></div>
+
+    <div class="table-wrapper">
+      <table id="tabelaPreview">
+        <thead>
+          <tr>
+            <th>Dia</th>
+            <th>Data</th>
+            <th>Estaca Inicial (m)</th>
+            <th>Estaca Final (m)</th>
+            <th>Avanço Diário (m)</th>
+            <th>Volume / Metro (m³/m)</th>
+            <th>Volume Diário (m³)</th>
+            <th>Volume Acumulado (m³)</th>
+            <th>% Concluído</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyDados"></tbody>
+        <tfoot id="tfootDados"></tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Estado global da distribuição atual para que o botão de download exporte exatamente o que está na tela
+  let estadoAtual = {
+    registros: [],
+    parametros: null
+  };
+
+  // Formata número no padrão brasileiro para exibição na tela
+  function fmtBR(valor, casas = 2) {
+    return Number(valor).toLocaleString('pt-BR', {
+      minimumFractionDigits: casas,
+      maximumFractionDigits: casas
+    });
+  }
+
+  // Converte data YYYY-MM-DD sem bug de fuso horário no Brasil
+  function parseDataLocal(str) {
+    if (!str) return null;
+    const [y, m, d] = str.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  }
+
+  function formatarDataBR(dateObj) {
+    const d = String(dateObj.getDate()).padStart(2, '0');
+    const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const y = dateObj.getFullYear();
+    return `${d}/${m}/${y}`;
+  }
+
+  /**
+   * Algoritmo de Redistribuição Exata em Centésimos:
+   * Gera N valores onde cada item i respeita estritamente [minArr[i], maxArr[i]]
+   * e a soma de todos os itens arredondados em 2 casas decimais fecha 100% em somaTotal.
+   */
+  function sortearComLimitesExatos(minArr, maxArr, somaTotal) {
+    const n = minArr.length;
+    const targetCents = Math.round(somaTotal * 100);
+    const minC = minArr.map(v => Math.round(v * 100));
+    const maxC = maxArr.map((v, i) => Math.max(minC[i], Math.round(v * 100)));
+
+    const sumMin = minC.reduce((a, b) => a + b, 0);
+    const sumMax = maxC.reduce((a, b) => a + b, 0);
+
+    // Caso os limites por arredondamento fiquem 1 centavo fora, ajusta proporcionalmente
+    if (targetCents < sumMin) {
+      let diff = sumMin - targetCents;
+      for (let i = 0; i < n && diff > 0; i++) {
+        const cut = Math.min(diff, minC[i] - 1);
+        minC[i] -= cut;
+        diff -= cut;
+      }
+    } else if (targetCents > sumMax) {
+      let diff = targetCents - sumMax;
+      for (let i = 0; i < n && diff > 0; i++) {
+        const add = Math.ceil(diff / (n - i));
+        maxC[i] += add;
+        diff -= add;
+      }
+    }
+
+    // 1. Sorteio inicial uniforme dentro do intervalo de cada dia
+    const valC = new Array(n);
+    let currentSum = 0;
+    for (let i = 0; i < n; i++) {
+      const span = maxC[i] - minC[i];
+      const r = span > 0 ? Math.floor(Math.random() * (span + 1)) : 0;
+      valC[i] = minC[i] + r;
+      currentSum += valC[i];
+    }
+
+    // 2. Redistribuição aleatória da diferença até zerar os centavos
+    let diff = targetCents - currentSum;
+    let iter = 0;
+    while (diff !== 0 && iter < 25000) {
+      iter++;
+      const candidatos = [];
+      for (let i = 0; i < n; i++) {
+        if (diff > 0 && valC[i] < maxC[i]) candidatos.push(i);
+        else if (diff < 0 && valC[i] > minC[i]) candidatos.push(i);
+      }
+      if (candidatos.length === 0) break;
+
+      // Embaralha candidatos para manter aleatoriedade limpa
+      for (let i = candidatos.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [candidatos[i], candidatos[j]] = [candidatos[j], candidatos[i]];
+      }
+
+      for (const idx of candidatos) {
+        if (diff === 0) break;
+        if (diff > 0) {
+          const folga = maxC[idx] - valC[idx];
+          const passoMax = Math.max(1, Math.ceil(diff / Math.max(1, candidatos.length / 2)));
+          const delta = Math.min(folga, diff, Math.floor(Math.random() * passoMax) + 1);
+          valC[idx] += delta;
+          diff -= delta;
+        } else {
+          const folga = valC[idx] - minC[idx];
+          const absDiff = Math.abs(diff);
+          const passoMax = Math.max(1, Math.ceil(absDiff / Math.max(1, candidatos.length / 2)));
+          const delta = Math.min(folga, absDiff, Math.floor(Math.random() * passoMax) + 1);
+          valC[idx] -= delta;
+          diff += delta;
+        }
+      }
+    }
+
+    return valC.map(c => Number((c / 100).toFixed(2)));
+  }
+
+  function lerModoSelecionado() {
+    const el = document.querySelector('input[name="modoSorteio"]:checked');
+    return el ? el.value : 'volume_diario';
+  }
+
+  function calcularMediasAtuais() {
+    const dtIni = parseDataLocal(document.getElementById('dataInicio').value);
+    const dtFim = parseDataLocal(document.getElementById('dataFim').value);
+    const volumeTotal = parseFloat(document.getElementById('volumeTotal').value) || 0;
+    const estacaIni = parseFloat(document.getElementById('estacaInicial').value) || 0;
+    const estacaFim = parseFloat(document.getElementById('estacaFinal').value) || 0;
+
+    if (!dtIni || !dtFim || dtFim < dtIni || estacaIni === estacaFim || volumeTotal <= 0) {
+      return null;
+    }
+
+    const diasTotais = Math.round((dtFim - dtIni) / (1000 * 60 * 60 * 24)) + 1;
+    const sentido = estacaFim >= estacaIni ? 1 : -1;
+    const avancoTotal = Math.abs(estacaFim - estacaIni);
+    const volMedioDia = volumeTotal / diasTotais;
+    const avancoMedioDia = avancoTotal / diasTotais;
+    const relacaoMediaMetro = volumeTotal / avancoTotal;
+
+    return {
+      dtIni,
+      dtFim,
+      diasTotais,
+      volumeTotal,
+      estacaIni,
+      estacaFim,
+      sentido,
+      avancoTotal,
+      volMedioDia,
+      avancoMedioDia,
+      relacaoMediaMetro
+    };
+  }
+
+  function atualizarTextosEInterface(ajustarInputsAutomaticamente = false) {
+    const m = calcularMediasAtuais();
+    const modo = lerModoSelecionado();
+
+    document.getElementById('pillModoVolume').classList.toggle('active', modo === 'volume_diario');
+    document.getElementById('pillModoEstaca').classList.toggle('active', modo === 'volume_metro');
+
+    const lblMin = document.getElementById('lblMin');
+    const lblMax = document.getElementById('lblMax');
+    const hintMin = document.getElementById('hintMin');
+    const hintMax = document.getElementById('hintMax');
+    const inputMin = document.getElementById('limiteMin');
+    const inputMax = document.getElementById('limiteMax');
+
+    if (!m) {
+      document.getElementById('textoMedias').innerHTML = '⚠️ Verifique as datas, estacas e volume informados.';
+      return;
+    }
+
+    document.getElementById('textoMedias').innerHTML =
+      `<strong>Médias de Referência:</strong> ${m.diasTotais} dias operacionais &nbsp;|&nbsp; ` +
+      `<strong>Volume Médio:</strong> ${fmtBR(m.volMedioDia)} m³/dia &nbsp;|&nbsp; ` +
+      `<strong>Avanço Médio:</strong> ${fmtBR(m.avancoMedioDia)} m/dia &nbsp;|&nbsp; ` +
+      `<strong>Densidade Média:</strong> ${fmtBR(m.relacaoMediaMetro)} m³/m`;
+
+    if (modo === 'volume_diario') {
+      lblMin.textContent = 'Volume Mínimo por Dia (m³/dia)';
+      lblMax.textContent = 'Volume Máximo por Dia (m³/dia)';
+      hintMin.textContent = `Para fechar a conta, deve ser ≤ ${fmtBR(m.volMedioDia)} m³/dia`;
+      hintMax.textContent = `Para fechar a conta, deve ser ≥ ${fmtBR(m.volMedioDia)} m³/dia`;
+      inputMin.step = '25';
+      inputMax.step = '25';
+      if (ajustarInputsAutomaticamente) {
+        inputMin.value = (m.volMedioDia * 0.75).toFixed(2);
+        inputMax.value = (m.volMedioDia * 1.25).toFixed(2);
+      }
+    } else {
+      lblMin.textContent = 'Volume Mínimo por Estaca/Metro (m³/m)';
+      lblMax.textContent = 'Volume Máximo por Estaca/Metro (m³/m)';
+      hintMin.textContent = `Para fechar a conta, deve ser ≤ ${fmtBR(m.relacaoMediaMetro)} m³/m`;
+      hintMax.textContent = `Para fechar a conta, deve ser ≥ ${fmtBR(m.relacaoMediaMetro)} m³/m`;
+      inputMin.step = '1';
+      inputMax.step = '1';
+      if (ajustarInputsAutomaticamente) {
+        inputMin.value = (m.relacaoMediaMetro * 0.75).toFixed(2);
+        inputMax.value = (m.relacaoMediaMetro * 1.25).toFixed(2);
+      }
+    }
+  }
+
+  function gerarDistribuicao() {
+    const erroBanner = document.getElementById('erroBanner');
+    const cardResultados = document.getElementById('cardResultados');
+    erroBanner.style.display = 'none';
+
+    const dtIni = parseDataLocal(document.getElementById('dataInicio').value);
+    const dtFim = parseDataLocal(document.getElementById('dataFim').value);
+    const volumeTotal = parseFloat(document.getElementById('volumeTotal').value);
+    const estacaIni = parseFloat(document.getElementById('estacaInicial').value);
+    const estacaFim = parseFloat(document.getElementById('estacaFinal').value);
+    const mesAno = document.getElementById('mesAno').value.trim() || 'Setembro / 2026';
+
+    if (!dtIni || !dtFim || dtFim < dtIni) {
+      mostrarErro('⚠️ A Data Final deve ser igual ou posterior à Data Inicial.');
+      return;
+    }
+    if (isNaN(estacaIni) || isNaN(estacaFim) || estacaIni === estacaFim) {
+      mostrarErro('⚠️ A Estaca Final deve ser diferente da Estaca Inicial.');
+      return;
+    }
+    if (isNaN(volumeTotal) || volumeTotal <= 0) {
+      mostrarErro('⚠️ Informe um Volume Total válido maior que zero.');
+      return;
+    }
+
+    const m = calcularMediasAtuais();
+    const modo = lerModoSelecionado();
+    const limMin = parseFloat(document.getElementById('limiteMin').value);
+    const limMax = parseFloat(document.getElementById('limiteMax').value);
+    const varPct = Math.min(48, Math.max(2, parseFloat(document.getElementById('variacaoEstaca').value) || 20)) / 100;
+
+    if (isNaN(limMin) || isNaN(limMax) || limMin <= 0 || limMax <= 0) {
+      mostrarErro('⚠️ Os limites Mínimo e Máximo devem ser maiores que zero.');
+      return;
+    }
+    if (limMin > limMax) {
+      mostrarErro('⚠️ O limite Mínimo não pode ser maior que o limite Máximo.');
+      return;
+    }
+
+    if (modo === 'volume_diario') {
+      if (limMin * m.diasTotais > m.volumeTotal + 0.05) {
+        mostrarErro(`⚠️ Limite Mínimo muito alto! Com mínimo de ${fmtBR(limMin)} m³/dia em ${m.diasTotais} dias, o volume passaria de ${fmtBR(limMin * m.diasTotais)} m³. O mínimo deve ser ≤ ${fmtBR(m.volMedioDia)} m³/dia.`);
+        return;
+      }
+      if (limMax * m.diasTotais < m.volumeTotal - 0.05) {
+        mostrarErro(`⚠️ Limite Máximo muito baixo! Com máximo de ${fmtBR(limMax)} m³/dia em ${m.diasTotais} dias, o volume chegaria no máximo a ${fmtBR(limMax * m.diasTotais)} m³. O máximo deve ser ≥ ${fmtBR(m.volMedioDia)} m³/dia.`);
+        return;
+      }
+    } else {
+      if (limMin * m.avancoTotal > m.volumeTotal + 0.05) {
+        mostrarErro(`⚠️ Volume Mínimo por Metro muito alto! Para fechar ${fmtBR(m.volumeTotal)} m³ em ${fmtBR(m.avancoTotal)} m, o mínimo deve ser ≤ ${fmtBR(m.relacaoMediaMetro)} m³/m.`);
+        return;
+      }
+      if (limMax * m.avancoTotal < m.volumeTotal - 0.05) {
+        mostrarErro(`⚠️ Volume Máximo por Metro muito baixo! Para fechar ${fmtBR(m.volumeTotal)} m³ em ${fmtBR(m.avancoTotal)} m, o máximo deve ser ≥ ${fmtBR(m.relacaoMediaMetro)} m³/m.`);
+        return;
+      }
+    }
+
+    cardResultados.style.display = 'block';
+
+    let volumesDiarios = [];
+    let avancosDiarios = [];
+
+    if (modo === 'volume_diario') {
+      // 1. Sorteia os volumes diários estritamente dentro de [limMin, limMax] fechando 100% em volumeTotal
+      const minVolArr = new Array(m.diasTotais).fill(limMin);
+      const maxVolArr = new Array(m.diasTotais).fill(limMax);
+      volumesDiarios = sortearComLimitesExatos(minVolArr, maxVolArr, m.volumeTotal);
+
+      // 2. Calcula intervalos de avanço diário acoplados ao volume do dia (coerência física: dias de maior volume avançam de forma compatível, mas com densidade m³/m variável)
+      const avancoEsperado = volumesDiarios.map(v => v / m.relacaoMediaMetro);
+      const minAvArr = avancoEsperado.map(a => Math.max(0.5, a * (1 - varPct)));
+      const maxAvArr = avancoEsperado.map(a => a * (1 + varPct));
+      avancosDiarios = sortearComLimitesExatos(minAvArr, maxAvArr, m.avancoTotal);
+    } else {
+      // Modo por Metro/Estaca (m³/m):
+      // 1. Sorteia avanços diários com variação natural em torno do avanço médio
+      const minAv = Math.max(0.5, m.avancoMedioDia * (1 - varPct));
+      const maxAv = m.avancoMedioDia * (1 + varPct);
+      const minAvArr = new Array(m.diasTotais).fill(minAv);
+      const maxAvArr = new Array(m.diasTotais).fill(maxAv);
+      avancosDiarios = sortearComLimitesExatos(minAvArr, maxAvArr, m.avancoTotal);
+
+      // 2. Para cada dia, o volume permitido é [avancoDia * limMin, avancoDia * limMax], garantindo 100% que (volDia / avancoDia) fique dentro de [limMin, limMax]
+      const minVolArr = avancosDiarios.map(av => av * limMin);
+      const maxVolArr = avancosDiarios.map(av => av * limMax);
+      volumesDiarios = sortearComLimitesExatos(minVolArr, maxVolArr, m.volumeTotal);
+    }
+
+    // Monta os registros diários contínuos
+    const registros = [];
+    let currEstaca = m.estacaIni;
+    let currVolAcc = 0;
+
+    for (let i = 0; i < m.diasTotais; i++) {
+      const dia = i + 1;
+      const dt = new Date(m.dtIni.getFullYear(), m.dtIni.getMonth(), m.dtIni.getDate() + i);
+
+      let volDia = volumesDiarios[i];
+      let distDia = avancosDiarios[i];
+      let estacaIniDia = Number(currEstaca.toFixed(2));
+      let estacaFimDia;
+
+      if (dia === m.diasTotais) {
+        volDia = Number((m.volumeTotal - currVolAcc).toFixed(2));
+        estacaFimDia = Number(m.estacaFim.toFixed(2));
+        distDia = Number(Math.abs(estacaFimDia - estacaIniDia).toFixed(2));
+      } else {
+        estacaFimDia = Number((estacaIniDia + distDia * m.sentido).toFixed(2));
+      }
+
+      currVolAcc = Number((currVolAcc + volDia).toFixed(2));
+      currEstaca = estacaFimDia;
+
+      const relacaoMetro = distDia > 0 ? Number((volDia / distDia).toFixed(2)) : 0;
+      const pctConcluido = Number(((currVolAcc / m.volumeTotal) * 100).toFixed(2));
+
+      registros.push({
+        dia,
+        data: formatarDataBR(dt),
+        estacaIni: estacaIniDia,
+        estacaFim: estacaFimDia,
+        avancoDia: distDia,
+        densidadeDia: relacaoMetro,
+        volDia: volDia,
+        volAcc: currVolAcc,
+        pct: pctConcluido
+      });
+    }
+
+    estadoAtual = {
+      registros,
+      parametros: {
+        ...m,
+        mesAno,
+        modoTexto: modo === 'volume_diario' ? 'Por Volume Diário (m³/dia)' : 'Por Volume por Estaca/Metro (m³/m)',
+        limMin,
+        limMax
+      }
+    };
+
+    renderizarTabelaEAuditoria();
+  }
+
+  function mostrarErro(msg) {
+    const erroBanner = document.getElementById('erroBanner');
+    erroBanner.textContent = msg;
+    erroBanner.style.display = 'block';
+    document.getElementById('cardResultados').style.display = 'none';
+  }
+
+  function renderizarTabelaEAuditoria() {
+    const { registros, parametros } = estadoAtual;
+    if (!registros.length) return;
+
+    const vols = registros.map(r => r.volDia);
+    const dens = registros.map(r => r.densidadeDia);
+    const menorVol = Math.min(...vols);
+    const maiorVol = Math.max(...vols);
+    const menorDens = Math.min(...dens);
+    const maiorDens = Math.max(...dens);
+    const somaVol = registros[registros.length - 1].volAcc;
+    const somaAvanco = registros.reduce((acc, r) => acc + r.avancoDia, 0);
+
+    document.getElementById('auditBar').innerHTML = `
+      <div class="audit-item">
+        <strong>✅ Fechamento de Volume</strong>
+        <span>${fmtBR(somaVol)} m³ (100,00%)</span>
+      </div>
+      <div class="audit-item">
+        <strong>✅ Fechamento de Estacas</strong>
+        <span>${fmtBR(somaAvanco)} m (${fmtBR(parametros.estacaIni)} ➔ ${fmtBR(parametros.estacaFim)} m)</span>
+      </div>
+      <div class="audit-item">
+        <strong>📊 Intervalo Sorteado (Dia)</strong>
+        <span>${fmtBR(menorVol)} a ${fmtBR(maiorVol)} m³/dia</span>
+      </div>
+      <div class="audit-item">
+        <strong>📏 Variação por Estaca/Metro</strong>
+        <span>${fmtBR(menorDens)} a ${fmtBR(maiorDens)} m³/m</span>
+      </div>
+    `;
+
+    const tbody = document.getElementById('tbodyDados');
+    tbody.innerHTML = registros.map(r => `
+      <tr>
+        <td class="center">${r.dia}</td>
+        <td class="center">${r.data}</td>
+        <td>${fmtBR(r.estacaIni)}</td>
+        <td>${fmtBR(r.estacaFim)}</td>
+        <td>${fmtBR(r.avancoDia)}</td>
+        <td>${fmtBR(r.densidadeDia)}</td>
+        <td><strong>${fmtBR(r.volDia)}</strong></td>
+        <td>${fmtBR(r.volAcc)}</td>
+        <td>${fmtBR(r.pct)}%</td>
+      </tr>
+    `).join('');
+
+    const tfoot = document.getElementById('tfootDados');
+    tfoot.innerHTML = `
+      <tr>
+        <td class="center">TOTAL</td>
+        <td class="center">${parametros.diasTotais} dias</td>
+        <td>${fmtBR(parametros.estacaIni)}</td>
+        <td>${fmtBR(parametros.estacaFim)}</td>
+        <td>${fmtBR(parametros.avancoTotal)}</td>
+        <td>${fmtBR(parametros.relacaoMediaMetro)}</td>
+        <td>${fmtBR(parametros.volumeTotal)}</td>
+        <td>${fmtBR(parametros.volumeTotal)}</td>
+        <td>100,00%</td>
+      </tr>
+    `;
+  }
+
+  async function exportarParaExcel() {
+    const { registros, parametros } = estadoAtual;
+    if (!registros || !registros.length) return;
+
+    const wb = new ExcelJS.Workbook();
+    wb.creator = 'Sistema de Distribuição de Dragagem';
+    wb.created = new Date();
+
+    const navyFill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F4E78' } };
+    const zebraFill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF2F2F2' } };
+    const totalFill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD9E1F2' } };
+
+    const fontTitle = { name: 'Calibri', size: 16, bold: true, color: { argb: 'FF1F4E78' } };
+    const fontHeader = { name: 'Calibri', size: 11, bold: true, color: { argb: 'FFFFFFFF' } };
+    const fontBoldDark = { name: 'Calibri', size: 11, bold: true, color: { argb: 'FF1F4E78' } };
+    const fontRegular = { name: 'Calibri', size: 11, color: { argb: 'FF000000' } };
+
+    const thinBorder = {
+      top: { style: 'thin', color: { argb: 'FFD9D9D9' } },
+      left: { style: 'thin', color: { argb: 'FFD9D9D9' } },
+      bottom: { style: 'thin', color: { argb: 'FFD9D9D9' } },
+      right: { style: 'thin', color: { argb: 'FFD9D9D9' } }
+    };
+
+    // ABA 1: Parâmetros e Resumo
+    const ws1 = wb.addWorksheet('Parâmetros e Resumo', { views: [{ showGridLines: true }] });
+    ws1.mergeCells('A1:E1');
+    ws1.getCell('A1').value = 'SISTEMA DE DISTRIBUIÇÃO DIÁRIA DE DRAGAGEM';
+    ws1.getCell('A1').font = fontTitle;
+
+    ws1.mergeCells('A3:C3');
+    ws1.getCell('A3').value = 'PARÂMETROS DA OPERAÇÃO';
+    ws1.getCell('A3').font = fontHeader;
+    ws1.getCell('A3').fill = navyFill;
+    ws1.getCell('A3').alignment = { horizontal: 'center', vertical: 'middle' };
+
+    const listaParams = [
+      ['Mês/Ano de Referência', parametros.mesAno, null],
+      ['Data Inicial da Operação', formatarDataBR(parametros.dtIni), null],
+      ['Data Final da Operação', formatarDataBR(parametros.dtFim), null],
+      ['Volume Total Retirado (m³)', parametros.volumeTotal, '#,##0.00'],
+      ['Estaca Inicial (m)', parametros.estacaIni, '#,##0.00'],
+      ['Estaca Final (m)', parametros.estacaFim, '#,##0.00'],
+      ['Dias Operacionais', parametros.diasTotais, '#,##0'],
+      ['Meta Diária Média (m³)', Number(parametros.volMedioDia.toFixed(2)), '#,##0.00'],
+      ['Avanço Total no Canal (m)', parametros.avancoTotal, '#,##0.00'],
+      ['Relação Média no Canal (m³/m)', Number(parametros.relacaoMediaMetro.toFixed(2)), '#,##0.00'],
+      ['Modo de Sorteio Utilizado', parametros.modoTexto, null],
+      ['Intervalo Configurado (Mín a Máx)', `${fmtBR(parametros.limMin)} a ${fmtBR(parametros.limMax)}`, null]
+    ];
+
+    listaParams.forEach((item, idx) => {
+      const r = idx + 4;
+      const c1 = ws1.getCell(r, 1);
+      const c2 = ws1.getCell(r, 2);
+      c1.value = item[0];
+      c1.font = fontBoldDark;
+      c1.border = thinBorder;
+
+      c2.value = item[1];
+      c2.font = fontRegular;
+      c2.border = thinBorder;
+      if (item[2]) c2.numFmt = item[2];
+    });
+
+    ws1.getColumn(1).width = 34;
+    ws1.getColumn(2).width = 32;
+
+    // ABA 2: Distribuição Diária (com Fórmulas Nativas do Excel)
+    const ws2 = wb.addWorksheet('Distribuição Diária', { views: [{ showGridLines: true }] });
+    ws2.mergeCells('A1:I1');
+    ws2.getCell('A1').value = 'RELATÓRIO DE DISTRIBUIÇÃO DIÁRIA DE DRAGAGEM NO CANAL';
+    ws2.getCell('A1').font = fontTitle;
+
+    const headers = [
+      'Dia',
+      'Data',
+      'Estaca Inicial (m)',
+      'Estaca Final (m)',
+      'Avanço Diário (m)',
+      'Volume por Metro (m³/m)',
+      'Volume Diário (m³)',
+      'Volume Acumulado (m³)',
+      '% Concluído'
+    ];
+
+    headers.forEach((h, i) => {
+      const cell = ws2.getCell(3, i + 1);
+      cell.value = h;
+      cell.font = fontHeader;
+      cell.fill = navyFill;
+      cell.alignment = { horizontal: 'center', vertical: 'middle' };
+    });
+
+    const linhaTotal = registros.length + 4;
+    const opSinal = parametros.sentido >= 0 ? '+' : '-';
+
+    registros.forEach((row, idx) => {
+      const r = idx + 4;
+      ws2.getCell(r, 1).value = row.dia;
+      ws2.getCell(r, 1).alignment = { horizontal: 'center' };
+
+      ws2.getCell(r, 2).value = row.data;
+      ws2.getCell(r, 2).alignment = { horizontal: 'center' };
+
+      // Estaca Inicial: no 1º dia é valor fixo, nos seguintes puxa a Estaca Final do dia anterior (=D4)
+      if (idx === 0) {
+        ws2.getCell(r, 3).value = row.estacaIni;
+      } else {
+        ws2.getCell(r, 3).value = { formula: `D${r - 1}`, result: row.estacaIni };
+      }
+      ws2.getCell(r, 3).numFmt = '#,##0.00';
+
+      // Estaca Final: =C4+E4 (ou C4-E4 se decrescente)
+      ws2.getCell(r, 4).value = { formula: `C${r}${opSinal}E${r}`, result: row.estacaFim };
+      ws2.getCell(r, 4).numFmt = '#,##0.00';
+
+      // Avanço Diário Sorteado
+      ws2.getCell(r, 5).value = row.avancoDia;
+      ws2.getCell(r, 5).numFmt = '#,##0.00';
+
+      // Volume por Metro: =IF(E4>0, G4/E4, 0)
+      ws2.getCell(r, 6).value = { formula: `IF(E${r}>0,G${r}/E${r},0)`, result: row.densidadeDia };
+      ws2.getCell(r, 6).numFmt = '#,##0.00';
+
+      // Volume Diário Sorteado
+      ws2.getCell(r, 7).value = row.volDia;
+      ws2.getCell(r, 7).numFmt = '#,##0.00';
+
+      // Volume Acumulado: =G4 no 1º dia, =H4+G5 nos demais
+      if (idx === 0) {
+        ws2.getCell(r, 8).value = { formula: `G${r}`, result: row.volAcc };
+      } else {
+        ws2.getCell(r, 8).value = { formula: `H${r - 1}+G${r}`, result: row.volAcc };
+      }
+      ws2.getCell(r, 8).numFmt = '#,##0.00';
+
+      // % Concluído: =H4/$G$LinhaTotal
+      ws2.getCell(r, 9).value = {
+        formula: `H${r}/$G$${linhaTotal}`,
+        result: Number((row.volAcc / parametros.volumeTotal).toFixed(4))
+      };
+      ws2.getCell(r, 9).numFmt = '0.00%';
+
+      for (let c = 1; c <= 9; c++) {
+        const cell = ws2.getCell(r, c);
+        cell.font = fontRegular;
+        cell.border = thinBorder;
+        if (r % 2 === 0) cell.fill = zebraFill;
+      }
+    });
+
+    // Linha de Totalização com Fórmulas
+    const ultLinhaDados = linhaTotal - 1;
+    ws2.getCell(linhaTotal, 1).value = 'TOTAL';
+    ws2.getCell(linhaTotal, 1).alignment = { horizontal: 'center' };
+
+    ws2.getCell(linhaTotal, 2).value = `${parametros.diasTotais} dias`;
+    ws2.getCell(linhaTotal, 2).alignment = { horizontal: 'center' };
+
+    ws2.getCell(linhaTotal, 3).value = { formula: 'C4', result: parametros.estacaIni };
+    ws2.getCell(linhaTotal, 3).numFmt = '#,##0.00';
+
+    ws2.getCell(linhaTotal, 4).value = { formula: `D${ultLinhaDados}`, result: parametros.estacaFim };
+    ws2.getCell(linhaTotal, 4).numFmt = '#,##0.00';
+
+    ws2.getCell(linhaTotal, 5).value = { formula: `SUM(E4:E${ultLinhaDados})`, result: parametros.avancoTotal };
+    ws2.getCell(linhaTotal, 5).numFmt = '#,##0.00';
+
+    ws2.getCell(linhaTotal, 6).value = {
+      formula: `G${linhaTotal}/E${linhaTotal}`,
+      result: Number(parametros.relacaoMediaMetro.toFixed(2))
+    };
+    ws2.getCell(linhaTotal, 6).numFmt = '#,##0.00';
+
+    ws2.getCell(linhaTotal, 7).value = { formula: `SUM(G4:G${ultLinhaDados})`, result: parametros.volumeTotal };
+    ws2.getCell(linhaTotal, 7).numFmt = '#,##0.00';
+
+    ws2.getCell(linhaTotal, 8).value = { formula: `H${ultLinhaDados}`, result: parametros.volumeTotal };
+    ws2.getCell(linhaTotal, 8).numFmt = '#,##0.00';
+
+    ws2.getCell(linhaTotal, 9).value = { formula: `I${ultLinhaDados}`, result: 1 };
+    ws2.getCell(linhaTotal, 9).numFmt = '0.00%';
+
+    for (let c = 1; c <= 9; c++) {
+      const cell = ws2.getCell(linhaTotal, c);
+      cell.font = fontBoldDark;
+      cell.fill = totalFill;
+      cell.border = thinBorder;
+    }
+
+    const larguras = [10, 15, 20, 20, 20, 24, 20, 24, 15];
+    larguras.forEach((w, i) => {
+      ws2.getColumn(i + 1).width = w;
+    });
+
+    const buffer = await wb.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const hoje = new Date();
+    const sufixo = `${hoje.getFullYear()}_${String(hoje.getMonth() + 1).padStart(2, '0')}`;
+    a.href = url;
+    a.download = `distribuicao_draga_${sufixo}.xlsx`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // Eventos da Interface
+  document.querySelectorAll('input[name="modoSorteio"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      atualizarTextosEInterface(true);
+      gerarDistribuicao();
+    });
+  });
+
+  ['dataInicio', 'dataFim', 'volumeTotal', 'estacaInicial', 'estacaFinal'].forEach(id => {
+    document.getElementById(id).addEventListener('change', () => {
+      atualizarTextosEInterface(true);
+      gerarDistribuicao();
+    });
+  });
+
+  ['mesAno', 'limiteMin', 'limiteMax', 'variacaoEstaca'].forEach(id => {
+    document.getElementById(id).addEventListener('change', () => {
+      atualizarTextosEInterface(false);
+      gerarDistribuicao();
+    });
+  });
+
+  document.getElementById('btnAutoLimites').addEventListener('click', () => {
+    atualizarTextosEInterface(true);
+    gerarDistribuicao();
+  });
+
+  document.getElementById('btnSortear').addEventListener('click', () => {
+    gerarDistribuicao();
+  });
+
+  document.getElementById('btnBaixarExcel').addEventListener('click', () => {
+    exportarParaExcel();
+  });
+
+  // Inicialização ao abrir a página
+  window.addEventListener('DOMContentLoaded', () => {
+    atualizarTextosEInterface(true);
+    gerarDistribuicao();
+  });
+</script>
+
+</body>
+</html>
