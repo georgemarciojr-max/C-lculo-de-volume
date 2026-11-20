@@ -25,6 +25,9 @@
       --info-bg: #EFF6FF;
       --info-text: #1E40AF;
       --info-border: #BFDBFE;
+      --warn-bg: #FFFBEB;
+      --warn-text: #92400E;
+      --warn-border: #FDE68A;
     }
 
     * {
@@ -42,7 +45,7 @@
     }
 
     .container {
-      max-width: 1280px;
+      max-width: 1360px;
       margin: 0 auto;
     }
 
@@ -71,7 +74,7 @@
 
     .grid-2 {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
       gap: 20px;
       margin-bottom: 20px;
     }
@@ -151,6 +154,41 @@
       box-shadow: 0 0 0 3px rgba(31, 78, 120, 0.15);
     }
 
+    .checkbox-box {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      cursor: pointer;
+    }
+
+    .checkbox-box input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--navy);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .checkbox-box span {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--navy-dark);
+      display: block;
+    }
+
+    .checkbox-box small {
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-weight: 400;
+      display: block;
+      margin-top: 2px;
+    }
+
     .radio-group {
       display: flex;
       flex-wrap: wrap;
@@ -200,11 +238,11 @@
       color: var(--info-text);
       padding: 14px 18px;
       border-radius: 10px;
-      font-size: 0.9rem;
+      font-size: 0.89rem;
       margin-bottom: 20px;
       display: flex;
       flex-wrap: wrap;
-      gap: 18px;
+      gap: 16px;
       align-items: center;
       justify-content: space-between;
     }
@@ -227,23 +265,23 @@
       color: var(--success-text);
       padding: 12px 16px;
       border-radius: 10px;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       margin-bottom: 18px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 10px;
     }
 
     .audit-item strong {
       display: block;
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       text-transform: uppercase;
       letter-spacing: 0.4px;
       opacity: 0.85;
     }
 
     .audit-item span {
-      font-size: 0.98rem;
+      font-size: 0.96rem;
       font-weight: 700;
     }
 
@@ -316,7 +354,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       white-space: nowrap;
     }
 
@@ -325,14 +363,14 @@
       top: 0;
       background-color: var(--navy);
       color: #FFF;
-      padding: 12px 14px;
+      padding: 12px 12px;
       text-align: center;
       font-weight: 600;
       z-index: 2;
     }
 
     tbody td {
-      padding: 9px 14px;
+      padding: 9px 12px;
       border-bottom: 1px solid var(--border);
       text-align: right;
     }
@@ -345,6 +383,10 @@
       background-color: #F8FAFC;
     }
 
+    tbody tr.row-repasse {
+      background-color: #FFFBEB;
+    }
+
     tbody tr:hover {
       background-color: #EFF6FF;
     }
@@ -355,13 +397,34 @@
       background-color: var(--navy-light);
       color: var(--navy-dark);
       font-weight: 700;
-      padding: 11px 14px;
+      padding: 11px 12px;
       text-align: right;
       border-top: 2px solid var(--navy);
     }
 
     tfoot td.center {
       text-align: center;
+    }
+
+    .badge-avanco {
+      display: inline-block;
+      background: #E0F2FE;
+      color: #075985;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .badge-repasse {
+      display: inline-block;
+      background: #FEF3C7;
+      color: #92400E;
+      border: 1px solid #FDE68A;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
     }
 
     .formula-box {
@@ -380,28 +443,41 @@
 <div class="container">
   <header>
     <h1>⚓ Gerador de Distribuição Diária de Dragagem</h1>
-    <p>Sorteio aleatório com estacas inteiras de 20 em 20 metros e fechamento exato de 100% do volume.</p>
+    <p>Estacas de 20 em 20 m, teto físico inviolável da draga, controle de horas trabalhadas e repasse automático de trechos.</p>
   </header>
 
   <div class="grid-2">
-    <!-- Coluna 1: Parâmetros Gerais -->
+    <!-- Coluna 1: Parâmetros Gerais e Capacidade da Draga -->
     <div class="card" style="margin-bottom: 0;">
-      <h2>📋 Parâmetros Gerais</h2>
+      <h2>📋 Período e Capacidade Real da Draga</h2>
       <div class="form-group">
         <label for="mesAno">Mês / Ano de Referência</label>
         <input type="text" id="mesAno" value="Outubro / 2026" />
       </div>
-      <div class="form-group">
-        <label for="dataInicio">Data Inicial</label>
-        <input type="date" id="dataInicio" value="2026-10-01" />
+      <div class="grid-sub-2 form-group">
+        <div>
+          <label for="dataInicio">Data Inicial</label>
+          <input type="date" id="dataInicio" value="2026-10-01" />
+        </div>
+        <div>
+          <label for="dataFim">Data Final</label>
+          <input type="date" id="dataFim" value="2026-10-18" />
+        </div>
       </div>
-      <div class="form-group">
-        <label for="dataFim">Data Final</label>
-        <input type="date" id="dataFim" value="2026-10-18" />
+      <div class="grid-sub-2 form-group">
+        <div>
+          <label for="capacidadeDraga">Produção Máx. da Draga (m³/dia)</label>
+          <input type="number" id="capacidadeDraga" value="1800" min="1" step="50" />
+        </div>
+        <div>
+          <label for="horasDia">Horas Trabalhadas / Dia (h)</label>
+          <input type="number" id="horasDia" value="18" min="0.5" max="24" step="0.5" />
+        </div>
       </div>
+      <div class="hint">Teto físico rígido: nenhum dia ultrapassará a produção máxima da draga.</div>
     </div>
 
-    <!-- Coluna 2: Parâmetros do Canal -->
+    <!-- Coluna 2: Parâmetros do Canal e Estaqueamento -->
     <div class="card" style="margin-bottom: 0;">
       <h2>📏 Parâmetros do Canal e Estaqueamento</h2>
       <div class="grid-sub-2 form-group">
@@ -424,7 +500,13 @@
           <input type="number" id="estacaFinal" value="17320" min="0" step="20" />
         </div>
       </div>
-      <div class="hint">As estacas inicial, final e diárias avançam sempre em múltiplos exatos do espaçamento (ex.: 20 em 20 m).</div>
+      <label class="checkbox-box" for="permitirRepasse">
+        <input type="checkbox" id="permitirRepasse" checked />
+        <div>
+          <span>Permitir repetição de estacas (Repasse de trecho)</span>
+          <small>Repete trechos de 20 em 20 m quando houver muito volume em poucas estacas ou mais dias que blocos disponíveis.</small>
+        </div>
+      </label>
     </div>
   </div>
 
@@ -432,7 +514,7 @@
   <div class="banner-info" id="resumoBanner">
     <div id="textoMedias">Calculando parâmetros...</div>
     <button type="button" class="btn-outline" id="btnAutoLimites">
-      ⚡ Ajustar Limites Automaticamente (±25% da Média)
+      ⚡ Ajustar Limites Automaticamente (±25% respeitando Teto)
     </button>
   </div>
 
@@ -445,7 +527,7 @@
         <input type="radio" name="modoSorteio" value="volume_diario" checked />
         <div>
           <div class="radio-pill-title">Opção 1: Limitar por Volume Diário (m³/dia)</div>
-          <div class="radio-pill-desc">Você define o mínimo e máximo de m³ por dia. As estacas avançam de 20 em 20 m acompanhando o volume.</div>
+          <div class="radio-pill-desc">Define o mínimo e máximo de m³ por dia (respeitando o teto da draga). As estacas avançam ou repetem de 20 em 20 m.</div>
         </div>
       </label>
 
@@ -453,37 +535,40 @@
         <input type="radio" name="modoSorteio" value="volume_metro" />
         <div>
           <div class="radio-pill-title">Opção 2: Limitar por Volume por Metro (m³/m)</div>
-          <div class="radio-pill-desc">Você define o intervalo de m³ por metro linear (m³/m) e o sistema calcula os volumes diários.</div>
+          <div class="radio-pill-desc">Define o intervalo de m³ por metro linear (m³/m) e o sistema calcula os volumes diários sem ultrapassar o teto da draga.</div>
         </div>
       </label>
     </div>
 
     <div class="grid-3">
       <div class="form-group">
-        <label id="lblMin" for="limiteMin">Volume Mínimo por Dia (m³)</label>
+        <label id="lblMin" for="limiteMin">Volume Mínimo por Dia (m³/dia)</label>
         <input type="number" id="limiteMin" value="1040" step="25" />
         <div class="hint" id="hintMin">Deve ser menor ou igual à média diária.</div>
       </div>
 
       <div class="form-group">
-        <label id="lblMax" for="limiteMax">Volume Máximo por Dia (m³)</label>
+        <label id="lblMax" for="limiteMax">Volume Máximo por Dia (m³/dia)</label>
         <input type="number" id="limiteMax" value="1735" step="25" />
-        <div class="hint" id="hintMax">Deve ser maior ou igual à média diária.</div>
+        <div class="hint" id="hintMax">Deve ser maior ou igual à média e menor ou igual ao teto da draga.</div>
       </div>
 
       <div class="form-group">
         <label for="variacaoEstaca">Oscilação da Densidade m³/Metro (%)</label>
         <input type="number" id="variacaoEstaca" value="20" min="3" max="45" step="1" />
-        <div class="hint">Varia o rendimento m³/m entre trechos mantendo as estacas sempre exatas de 20 em 20 m.</div>
+        <div class="hint">Varia o rendimento entre trechos mantendo as estacas exatas de 20 em 20 m.</div>
       </div>
     </div>
 
     <div class="formula-box">
-      <strong>📐 Regra de Estaqueamento Exato Ativa:</strong> Nenhum dia terá estaca quebrada. O sistema converte o trecho total em blocos inteiros de <code>20 m</code> (ou o espaçamento definido), sorteia estacas inteiras por dia (<code>20 m</code>, <code>40 m</code>, <code>60 m</code>...) e acopla o volume diário dentro do intervalo <code>[Mínimo, Máximo]</code> fechando em <strong>100,00%</strong>.
+      <strong>📐 Regras Físicas Ativas:</strong>
+      (1) Nenhum dia excede a <code>Produção Máxima da Draga</code>;
+      (2) Todas as estacas são múltiplos exatos de <code>20 m</code> (ou o espaçamento definido);
+      (3) Quando o trecho for curto para o volume/dias, o sistema gera <code>Repasse</code> repetindo trechos consecutivamente até fechar <strong>100,00%</strong>.
     </div>
   </div>
 
-  <!-- Alerta de Erro Matemático -->
+  <!-- Alerta de Erro Matemático / Capacidade -->
   <div class="banner-error" id="erroBanner"></div>
 
   <!-- Área de Resultados e Tabela -->
@@ -510,8 +595,11 @@
             <th>Data</th>
             <th>Estaca Inicial (m)</th>
             <th>Estaca Final (m)</th>
-            <th>Avanço Diário (m)</th>
+            <th>Trecho / Avanço (m)</th>
+            <th>Operação</th>
+            <th>Horas Trab. (h)</th>
             <th>Volume / Metro (m³/m)</th>
+            <th>Produtividade (m³/h)</th>
             <th>Volume Diário (m³)</th>
             <th>Volume Acumulado (m³)</th>
             <th>% Concluído</th>
@@ -552,7 +640,7 @@
   }
 
   /**
-   * Sorteia N inteiros onde cada item i está em [minArr[i], maxArr[i]]
+   * Sorteia N inteiros >= 1 onde cada item i respeita [minArr[i], maxArr[i]]
    * e a soma total fecha exatamente em targetInt.
    */
   function sortearInteirosComLimitesExatos(minArr, maxArr, targetInt) {
@@ -624,7 +712,6 @@
       }
     }
 
-    // Varredura final determinística caso reste diferença residual
     if (diff !== 0) {
       for (let i = 0; i < n && diff !== 0; i++) {
         if (diff > 0 && val[i] < maxI[i]) {
@@ -643,36 +730,15 @@
   }
 
   /**
-   * Sorteia N valores decimais em centésimos dentro de [minArr[i], maxArr[i]]
-   * fechando exatamente em somaTotal (2 casas decimais).
+   * Sorteio ESTRITO em centésimos:
+   * NUNCA viola minC[i] nem maxC[i] (protegendo o teto físico da draga).
+   * Pré-condição validada antes da chamada: minC[i] <= maxC[i] e sum(minC) <= targetCents <= sum(maxC).
    */
-  function sortearDecimaisComLimitesExatos(minArr, maxArr, somaTotal) {
-    const n = minArr.length;
-    const targetCents = Math.round(somaTotal * 100);
-    const minC = minArr.map(v => Math.max(1, Math.round(v * 100)));
-    const maxC = maxArr.map((v, i) => Math.max(minC[i], Math.round(v * 100)));
-
-    const sumMin = minC.reduce((a, b) => a + b, 0);
-    const sumMax = maxC.reduce((a, b) => a + b, 0);
-
-    if (targetCents < sumMin) {
-      let diff = sumMin - targetCents;
-      for (let i = 0; i < n && diff > 0; i++) {
-        const cut = Math.min(diff, Math.max(0, minC[i] - 1));
-        minC[i] -= cut;
-        diff -= cut;
-      }
-    } else if (targetCents > sumMax) {
-      let diff = targetCents - sumMax;
-      for (let i = 0; i < n && diff > 0; i++) {
-        const add = Math.ceil(diff / (n - i));
-        maxC[i] += add;
-        diff -= add;
-      }
-    }
-
+  function sortearCentavosEstrito(minC, maxC, targetCents) {
+    const n = minC.length;
     const valC = new Array(n);
     let currentSum = 0;
+
     for (let i = 0; i < n; i++) {
       const span = maxC[i] - minC[i];
       const r = span > 0 ? Math.floor(Math.random() * (span + 1)) : 0;
@@ -682,7 +748,7 @@
 
     let diff = targetCents - currentSum;
     let iter = 0;
-    while (diff !== 0 && iter < 30000) {
+    while (diff !== 0 && iter < 35000) {
       iter++;
       const candidatos = [];
       for (let i = 0; i < n; i++) {
@@ -715,7 +781,7 @@
       }
     }
 
-    // Varredura final determinística caso reste diferença residual
+    // Fechamento determinístico final respeitando estritamente [minC[i], maxC[i]]
     if (diff !== 0) {
       for (let i = 0; i < n && diff !== 0; i++) {
         if (diff > 0 && valC[i] < maxC[i]) {
@@ -733,6 +799,51 @@
     return valC.map(c => Number((c / 100).toFixed(2)));
   }
 
+  /**
+   * Divide B blocos únicos em S segmentos contínuos e distribui D dias sobre eles
+   * (gerando repasses consecutivos sempre que D > S).
+   */
+  function gerarSegmentosComRepasse(totalBlocos, diasTotais, numSegmentos, estacaIni, passo, sentido, varPct) {
+    const avgB = totalBlocos / numSegmentos;
+    const minB = Math.max(1, Math.floor(avgB * (1 - varPct)));
+    const maxB = Math.max(minB, Math.ceil(avgB * (1 + varPct)));
+    const segBlocks = sortearInteirosComLimitesExatos(
+      new Array(numSegmentos).fill(minB),
+      new Array(numSegmentos).fill(maxB),
+      totalBlocos
+    );
+
+    const avgP = diasTotais / numSegmentos;
+    const minP = Math.max(1, Math.floor(avgP));
+    const maxP = Math.max(minP, Math.ceil(avgP) + (diasTotais > numSegmentos ? 1 : 0));
+    const segPasses = sortearInteirosComLimitesExatos(
+      new Array(numSegmentos).fill(minP),
+      new Array(numSegmentos).fill(maxP),
+      diasTotais
+    );
+
+    const segmentosDiarios = [];
+    let curr = Math.round(estacaIni);
+
+    for (let s = 0; s < numSegmentos; s++) {
+      const ext = segBlocks[s] * passo;
+      const ini = curr;
+      const fim = ini + ext * sentido;
+      for (let p = 1; p <= segPasses[s]; p++) {
+        segmentosDiarios.push({
+          estacaIni: ini,
+          estacaFim: fim,
+          extensao: ext,
+          isRepasse: p > 1,
+          passada: p
+        });
+      }
+      curr = fim;
+    }
+
+    return segmentosDiarios;
+  }
+
   function lerModoSelecionado() {
     const el = document.querySelector('input[name="modoSorteio"]:checked');
     return el ? el.value : 'volume_diario';
@@ -745,10 +856,14 @@
     const estacaIni = parseFloat(document.getElementById('estacaInicial').value);
     const estacaFim = parseFloat(document.getElementById('estacaFinal').value);
     const passo = parseFloat(document.getElementById('intervaloEstaca').value);
+    const capDragaBruta = parseFloat(document.getElementById('capacidadeDraga').value);
+    const horasDiaBruta = parseFloat(document.getElementById('horasDia').value);
 
     if (
       !dtIni || !dtFim || dtFim < dtIni ||
       isNaN(volumeBruto) || volumeBruto <= 0 ||
+      isNaN(capDragaBruta) || capDragaBruta <= 0 ||
+      isNaN(horasDiaBruta) || horasDiaBruta <= 0 || horasDiaBruta > 24 ||
       isNaN(estacaIni) || isNaN(estacaFim) ||
       estacaIni < 0 || estacaFim < 0 ||
       estacaIni === estacaFim ||
@@ -758,19 +873,28 @@
     }
 
     const volumeTotal = Number(volumeBruto.toFixed(2));
+    const capMaxDraga = Number(capDragaBruta.toFixed(2));
+    const horasDia = Number(horasDiaBruta.toFixed(2));
     const diasTotais = Math.round((dtFim - dtIni) / (1000 * 60 * 60 * 24)) + 1;
     const sentido = estacaFim >= estacaIni ? 1 : -1;
     const avancoTotal = Math.abs(estacaFim - estacaIni);
     const totalBlocosEstaca = Math.round(avancoTotal / passo);
     const volMedioDia = volumeTotal / diasTotais;
     const avancoMedioDia = avancoTotal / diasTotais;
-    const relacaoMediaMetro = volumeTotal / avancoTotal;
+    const extensaoMinimaTrabalhada = Math.max(avancoTotal, diasTotais * passo);
+    const relacaoMediaPassada = volumeTotal / extensaoMinimaTrabalhada;
+    const prodMaxHora = capMaxDraga / horasDia;
+    const prodMediaHora = volMedioDia / horasDia;
 
     return {
       dtIni,
       dtFim,
       diasTotais,
       volumeTotal,
+      capMaxDraga,
+      horasDia,
+      prodMaxHora,
+      prodMediaHora,
       estacaIni,
       estacaFim,
       passo,
@@ -779,7 +903,8 @@
       avancoTotal,
       volMedioDia,
       avancoMedioDia,
-      relacaoMediaMetro
+      extensaoMinimaTrabalhada,
+      relacaoMediaPassada
     };
   }
 
@@ -804,37 +929,46 @@
     const inputMax = document.getElementById('limiteMax');
 
     if (!m) {
-      document.getElementById('textoMedias').innerHTML = '⚠️ Verifique as datas, estacas, espaçamento e volume informados.';
+      document.getElementById('textoMedias').innerHTML = '⚠️ Verifique as datas, capacidade da draga, horas, estacas e volume informados.';
       return;
     }
 
+    const capPeriodo = m.capMaxDraga * m.diasTotais;
+    const avisoRepasse = m.totalBlocosEstaca < m.diasTotais
+      ? ` &nbsp;|&nbsp; <strong>Repasse necessário:</strong> ${m.diasTotais} dias para ${m.totalBlocosEstaca} estacas`
+      : '';
+
     document.getElementById('textoMedias').innerHTML =
-      `<strong>Médias:</strong> ${m.diasTotais} dias (${m.totalBlocosEstaca} estacas de ${m.passo} m) &nbsp;|&nbsp; ` +
-      `<strong>Volume Médio:</strong> ${fmtBR(m.volMedioDia)} m³/dia &nbsp;|&nbsp; ` +
-      `<strong>Avanço Médio:</strong> ${fmtBR(m.avancoMedioDia)} m/dia &nbsp;|&nbsp; ` +
-      `<strong>Densidade Média:</strong> ${fmtBR(m.relacaoMediaMetro)} m³/m (${fmtBR(m.relacaoMediaMetro * m.passo)} m³/estaca)`;
+      `<strong>Período:</strong> ${m.diasTotais} dias (${m.totalBlocosEstaca} estacas de ${m.passo} m) &nbsp;|&nbsp; ` +
+      `<strong>Média Necessária:</strong> ${fmtBR(m.volMedioDia)} m³/dia (${fmtBR(m.prodMediaHora)} m³/h) &nbsp;|&nbsp; ` +
+      `<strong>Teto da Draga:</strong> ${fmtBR(m.capMaxDraga)} m³/dia (${fmtBR(m.prodMaxHora)} m³/h | Máx. período: ${fmtBR(capPeriodo)} m³)` +
+      avisoRepasse;
 
     if (modo === 'volume_diario') {
       lblMin.textContent = 'Volume Mínimo por Dia (m³/dia)';
       lblMax.textContent = 'Volume Máximo por Dia (m³/dia)';
       hintMin.textContent = `Deve ser ≤ ${fmtBR(m.volMedioDia)} m³/dia`;
-      hintMax.textContent = `Deve ser ≥ ${fmtBR(m.volMedioDia)} m³/dia`;
+      hintMax.textContent = `Entre ${fmtBR(m.volMedioDia)} e o teto da draga (${fmtBR(m.capMaxDraga)} m³/dia)`;
       inputMin.step = '25';
       inputMax.step = '25';
       if (ajustarInputsAutomaticamente) {
-        inputMin.value = (m.volMedioDia * 0.75).toFixed(2);
-        inputMax.value = (m.volMedioDia * 1.25).toFixed(2);
+        const autoMin = Math.max(1, m.volMedioDia * 0.75);
+        const autoMax = Math.min(m.capMaxDraga, Math.max(m.volMedioDia, m.volMedioDia * 1.25));
+        inputMin.value = Math.min(autoMin, autoMax).toFixed(2);
+        inputMax.value = autoMax.toFixed(2);
       }
     } else {
       lblMin.textContent = 'Volume Mínimo por Metro (m³/m)';
       lblMax.textContent = 'Volume Máximo por Metro (m³/m)';
-      hintMin.textContent = `Deve ser ≤ ${fmtBR(m.relacaoMediaMetro)} m³/m (equiv. ${fmtBR(m.relacaoMediaMetro * m.passo)} m³/estaca)`;
-      hintMax.textContent = `Deve ser ≥ ${fmtBR(m.relacaoMediaMetro)} m³/m`;
+      hintMin.textContent = `Referência média por passada: ${fmtBR(m.relacaoMediaPassada)} m³/m`;
+      hintMax.textContent = `Sempre limitado ao teto da draga (${fmtBR(m.capMaxDraga)} m³/dia)`;
       inputMin.step = '1';
       inputMax.step = '1';
       if (ajustarInputsAutomaticamente) {
-        inputMin.value = (m.relacaoMediaMetro * 0.75).toFixed(2);
-        inputMax.value = (m.relacaoMediaMetro * 1.25).toFixed(2);
+        const autoMin = Math.max(0.5, m.relacaoMediaPassada * 0.75);
+        const autoMax = m.relacaoMediaPassada * 1.25;
+        inputMin.value = autoMin.toFixed(2);
+        inputMax.value = autoMax.toFixed(2);
       }
     }
   }
@@ -847,13 +981,24 @@
     const dtIni = parseDataLocal(document.getElementById('dataInicio').value);
     const dtFim = parseDataLocal(document.getElementById('dataFim').value);
     const volumeBruto = parseFloat(document.getElementById('volumeTotal').value);
+    const capDragaBruta = parseFloat(document.getElementById('capacidadeDraga').value);
+    const horasDiaBruta = parseFloat(document.getElementById('horasDia').value);
     const estacaIni = parseFloat(document.getElementById('estacaInicial').value);
     const estacaFim = parseFloat(document.getElementById('estacaFinal').value);
     const passo = parseFloat(document.getElementById('intervaloEstaca').value);
+    const permitirRepasse = document.getElementById('permitirRepasse').checked;
     const mesAno = document.getElementById('mesAno').value.trim() || 'Outubro / 2026';
 
     if (!dtIni || !dtFim || dtFim < dtIni) {
       mostrarErro('⚠️ A Data Final deve ser igual ou posterior à Data Inicial.');
+      return;
+    }
+    if (isNaN(capDragaBruta) || capDragaBruta <= 0) {
+      mostrarErro('⚠️ Informe a Produção Máxima da Draga (m³/dia) maior que zero.');
+      return;
+    }
+    if (isNaN(horasDiaBruta) || horasDiaBruta <= 0 || horasDiaBruta > 24) {
+      mostrarErro('⚠️ As Horas Trabalhadas por Dia devem estar entre 0,5 e 24 horas.');
       return;
     }
     if (isNaN(passo) || passo <= 0 || !Number.isInteger(passo)) {
@@ -883,10 +1028,24 @@
       return;
     }
 
-    if (m.totalBlocosEstaca < m.diasTotais) {
+    // VALIDAÇÃO RÍGIDA 1: Capacidade Física Real da Draga no Período
+    const targetCents = Math.round(m.volumeTotal * 100);
+    const capMaxCents = Math.round(m.capMaxDraga * 100);
+
+    if (capMaxCents * m.diasTotais < targetCents) {
+      const diasMinimos = Math.ceil(m.volumeTotal / m.capMaxDraga);
       mostrarErro(
-        `⚠️ Trecho muito curto para avançar de ${passo} em ${passo} m em todos os dias! ` +
-        `De ${fmtBR(estacaIni, 0)} m a ${fmtBR(estacaFim, 0)} m existem apenas ${m.totalBlocosEstaca} estacas de ${passo} m para distribuir em ${m.diasTotais} dias.`
+        `🚫 Volume acima da capacidade real da draga! Em ${m.diasTotais} dias com teto de ${fmtBR(m.capMaxDraga)} m³/dia, ` +
+        `a draga consegue processar no máximo ${fmtBR(m.capMaxDraga * m.diasTotais)} m³ (faltam ${fmtBR(m.volumeTotal - m.capMaxDraga * m.diasTotais)} m³). ` +
+        `Para atingir 100% sem estourar a draga, você precisa de pelo menos ${diasMinimos} dias operacionais.`
+      );
+      return;
+    }
+
+    if (!permitirRepasse && m.totalBlocosEstaca < m.diasTotais) {
+      mostrarErro(
+        `⚠️ Há mais dias (${m.diasTotais}) do que estacas de ${passo} m disponíveis (${m.totalBlocosEstaca} estacas entre ${fmtBR(estacaIni, 0)} m e ${fmtBR(estacaFim, 0)} m). ` +
+        `Marque a opção "Permitir repetição de estacas (Repasse de trecho)" para distribuir o volume repetindo trechos.`
       );
       return;
     }
@@ -905,115 +1064,202 @@
       return;
     }
 
+    let segmentosDiarios = [];
+    let volumesDiarios = [];
+
     if (modo === 'volume_diario') {
-      if (limMin * m.diasTotais > m.volumeTotal + 0.05) {
-        mostrarErro(`⚠️ Limite Mínimo muito alto! Com mínimo de ${fmtBR(limMin)} m³/dia em ${m.diasTotais} dias, o volume passaria de ${fmtBR(limMin * m.diasTotais)} m³. O mínimo deve ser ≤ ${fmtBR(m.volMedioDia)} m³/dia.`);
+      if (limMax > m.capMaxDraga + 0.001) {
+        mostrarErro(
+          `⚠️ O Volume Máximo do sorteio (${fmtBR(limMax)} m³/dia) ultrapassa a Produção Máxima da Draga (${fmtBR(m.capMaxDraga)} m³/dia). ` +
+          `Reduza o limite máximo para até ${fmtBR(m.capMaxDraga)} m³/dia ou clique em "Ajustar Limites Automaticamente".`
+        );
         return;
       }
-      if (limMax * m.diasTotais < m.volumeTotal - 0.05) {
-        mostrarErro(`⚠️ Limite Máximo muito baixo! Com máximo de ${fmtBR(limMax)} m³/dia em ${m.diasTotais} dias, o volume chegaria no máximo a ${fmtBR(limMax * m.diasTotais)} m³. O máximo deve ser ≥ ${fmtBR(m.volMedioDia)} m³/dia.`);
+
+      const minCVal = Math.max(1, Math.round(limMin * 100));
+      const maxCVal = Math.min(capMaxCents, Math.round(limMax * 100));
+
+      if (minCVal * m.diasTotais > targetCents) {
+        mostrarErro(
+          `⚠️ Volume Mínimo por Dia muito alto! Com mínimo de ${fmtBR(limMin)} m³/dia em ${m.diasTotais} dias, ` +
+          `o total passaria de ${fmtBR(limMin * m.diasTotais)} m³. O mínimo deve ser ≤ ${fmtBR(m.volMedioDia)} m³/dia.`
+        );
         return;
+      }
+      if (maxCVal * m.diasTotais < targetCents) {
+        mostrarErro(
+          `⚠️ Volume Máximo por Dia muito baixo! Com máximo de ${fmtBR(limMax)} m³/dia em ${m.diasTotais} dias, ` +
+          `o total chegaria no máximo a ${fmtBR(limMax * m.diasTotais)} m³. O máximo deve estar entre ${fmtBR(m.volMedioDia)} e ${fmtBR(m.capMaxDraga)} m³/dia.`
+        );
+        return;
+      }
+
+      // 1. Sorteia volumes diários estritamente dentro de [limMin, min(limMax, capMaxDraga)]
+      volumesDiarios = sortearCentavosEstrito(
+        new Array(m.diasTotais).fill(minCVal),
+        new Array(m.diasTotais).fill(maxCVal),
+        targetCents
+      );
+
+      // 2. Define segmentos de estacas (avanço puro se B >= D, ou repasse automático se B < D)
+      if (m.totalBlocosEstaca >= m.diasTotais) {
+        const mediaBlocosDia = m.totalBlocosEstaca / m.diasTotais;
+        const minBlocosArr = [];
+        const maxBlocosArr = [];
+        for (let i = 0; i < m.diasTotais; i++) {
+          const blocosIdeais = (volumesDiarios[i] / (m.volumeTotal / m.avancoTotal)) / passo;
+          const bMin = Math.max(1, Math.floor(blocosIdeais * (1 - varPct * 0.7)));
+          const bMax = Math.max(bMin, Math.ceil(blocosIdeais * (1 + varPct * 0.7)));
+          minBlocosArr.push(Math.min(bMin, Math.floor(mediaBlocosDia)));
+          maxBlocosArr.push(Math.max(bMax, Math.ceil(mediaBlocosDia)));
+        }
+
+        const blocosSorteados = sortearInteirosComLimitesExatos(minBlocosArr, maxBlocosArr, m.totalBlocosEstaca);
+        let curr = Math.round(m.estacaIni);
+        segmentosDiarios = blocosSorteados.map(b => {
+          const ext = b * passo;
+          const ini = curr;
+          const fim = ini + ext * m.sentido;
+          curr = fim;
+          return { estacaIni: ini, estacaFim: fim, extensao: ext, isRepasse: false, passada: 1 };
+        });
+      } else {
+        // B < D: usa exatamente B segmentos únicos de 20m distribuídos nos D dias com repasse consecutivo
+        segmentosDiarios = gerarSegmentosComRepasse(
+          m.totalBlocosEstaca,
+          m.diasTotais,
+          m.totalBlocosEstaca,
+          m.estacaIni,
+          passo,
+          m.sentido,
+          varPct
+        );
       }
     } else {
-      if (limMin * m.avancoTotal > m.volumeTotal + 0.05) {
-        mostrarErro(`⚠️ Volume Mínimo por Metro muito alto! Para fechar ${fmtBR(m.volumeTotal)} m³ em ${fmtBR(m.avancoTotal, 0)} m, o mínimo deve ser ≤ ${fmtBR(m.relacaoMediaMetro)} m³/m.`);
+      // MODO 2: Por Volume por Metro (m³/m) respeitando SEMPRE o Teto Físico da Draga
+      if (Math.round(limMin * passo * 100) > capMaxCents) {
+        mostrarErro(
+          `⚠️ Volume Mínimo por Metro incompatível com o teto da draga! Mesmo avançando apenas 1 estaca (${passo} m), ` +
+          `${fmtBR(limMin)} m³/m exige ${fmtBR(limMin * passo)} m³/dia, acima do teto da draga (${fmtBR(m.capMaxDraga)} m³/dia).`
+        );
         return;
       }
-      if (limMax * m.avancoTotal < m.volumeTotal - 0.05) {
-        mostrarErro(`⚠️ Volume Máximo por Metro muito baixo! Para fechar ${fmtBR(m.volumeTotal)} m³ em ${fmtBR(m.avancoTotal, 0)} m, o máximo deve ser ≥ ${fmtBR(m.relacaoMediaMetro)} m³/m.`);
+
+      const maxS = Math.min(m.totalBlocosEstaca, m.diasTotais);
+      const minS = permitirRepasse ? 1 : m.diasTotais;
+
+      let solucaoEncontrada = null;
+
+      // Testa da configuração mais granular (sem repasse se possível) até repasses de trechos maiores
+      for (let s = maxS; s >= minS && !solucaoEncontrada; s--) {
+        if (s > m.totalBlocosEstaca) continue;
+        const tentativas = 20;
+        for (let t = 0; t < tentativas; t++) {
+          const candSegs = gerarSegmentosComRepasse(
+            m.totalBlocosEstaca,
+            m.diasTotais,
+            s,
+            m.estacaIni,
+            passo,
+            m.sentido,
+            varPct
+          );
+
+          const minC = [];
+          const maxC = [];
+          let viavel = true;
+          let sumMinC = 0;
+          let sumMaxC = 0;
+
+          for (let i = 0; i < candSegs.length; i++) {
+            const ext = candSegs[i].extensao;
+            const cMin = Math.max(1, Math.round(ext * limMin * 100));
+            const cMax = Math.min(capMaxCents, Math.round(ext * limMax * 100));
+            if (cMin > cMax) {
+              viavel = false;
+              break;
+            }
+            minC.push(cMin);
+            maxC.push(cMax);
+            sumMinC += cMin;
+            sumMaxC += cMax;
+          }
+
+          if (viavel && sumMinC <= targetCents && targetCents <= sumMaxC) {
+            solucaoEncontrada = {
+              segmentos: candSegs,
+              volumes: sortearCentavosEstrito(minC, maxC, targetCents)
+            };
+            break;
+          }
+        }
+      }
+
+      if (!solucaoEncontrada) {
+        const msgRepasse = !permitirRepasse
+          ? ' Tente marcar "Permitir repetição de estacas (Repasse)" ou ajuste o intervalo de m³/m.'
+          : ' Ajuste o intervalo de Mínimo e Máximo (m³/m) para que o volume caiba no teto diário da draga.';
+        mostrarErro(
+          `⚠️ Não foi possível fechar ${fmtBR(m.volumeTotal)} m³ respeitando simultaneamente o intervalo ` +
+          `${fmtBR(limMin)} a ${fmtBR(limMax)} m³/m e o teto da draga de ${fmtBR(m.capMaxDraga)} m³/dia.${msgRepasse}`
+        );
         return;
       }
+
+      segmentosDiarios = solucaoEncontrada.segmentos;
+      volumesDiarios = solucaoEncontrada.volumes;
     }
 
     cardResultados.style.display = 'block';
 
-    // Define limites de blocos inteiros de estaca (ex: 1, 2 ou 3 estacas de 20m por dia)
-    const mediaBlocosDia = m.totalBlocosEstaca / m.diasTotais;
-    const minBlocosGlobal = Math.max(1, Math.floor(mediaBlocosDia * (1 - varPct)));
-    const maxBlocosGlobal = Math.max(minBlocosGlobal + 1, Math.ceil(mediaBlocosDia * (1 + varPct)));
-
-    let avancosDiarios = [];
-    let volumesDiarios = [];
-
-    if (modo === 'volume_diario') {
-      // 1. Sorteia volumes diários estritamente dentro de [limMin, limMax] fechando 100% em volumeTotal
-      const minVolArr = new Array(m.diasTotais).fill(limMin);
-      const maxVolArr = new Array(m.diasTotais).fill(limMax);
-      volumesDiarios = sortearDecimaisComLimitesExatos(minVolArr, maxVolArr, m.volumeTotal);
-
-      // 2. Sorteia blocos inteiros de estacas (múltiplos de 20 m) proporcionalmente ao volume de cada dia
-      const minBlocosArr = [];
-      const maxBlocosArr = [];
-      for (let i = 0; i < m.diasTotais; i++) {
-        const blocosIdeais = (volumesDiarios[i] / m.relacaoMediaMetro) / passo;
-        const bMin = Math.max(1, Math.floor(blocosIdeais * (1 - varPct * 0.7)));
-        const bMax = Math.max(bMin, Math.ceil(blocosIdeais * (1 + varPct * 0.7)));
-        minBlocosArr.push(Math.min(bMin, Math.floor(mediaBlocosDia)));
-        maxBlocosArr.push(Math.max(bMax, Math.ceil(mediaBlocosDia)));
-      }
-
-      const blocosSorteados = sortearInteirosComLimitesExatos(minBlocosArr, maxBlocosArr, m.totalBlocosEstaca);
-      avancosDiarios = blocosSorteados.map(b => b * passo);
-    } else {
-      // Modo por Metro (m³/m):
-      // 1. Sorteia blocos inteiros de estacas (múltiplos de 20 m) por dia
-      const minBlocosArr = new Array(m.diasTotais).fill(minBlocosGlobal);
-      const maxBlocosArr = new Array(m.diasTotais).fill(maxBlocosGlobal);
-      const blocosSorteados = sortearInteirosComLimitesExatos(minBlocosArr, maxBlocosArr, m.totalBlocosEstaca);
-      avancosDiarios = blocosSorteados.map(b => b * passo);
-
-      // 2. Para cada dia, o volume permitido respeita [avancoDia * limMin, avancoDia * limMax]
-      const minVolArr = avancosDiarios.map(av => av * limMin);
-      const maxVolArr = avancosDiarios.map(av => av * limMax);
-      volumesDiarios = sortearDecimaisComLimitesExatos(minVolArr, maxVolArr, m.volumeTotal);
-    }
-
-    // Monta registros diários com estacas 100% inteiras de 20 em 20 m
+    // Monta os registros finais verificados
     const registros = [];
-    let currEstaca = Math.round(m.estacaIni);
     let currVolAcc = 0;
 
     for (let i = 0; i < m.diasTotais; i++) {
       const dia = i + 1;
       const dt = new Date(m.dtIni.getFullYear(), m.dtIni.getMonth(), m.dtIni.getDate() + i);
-
-      let volDia = volumesDiarios[i];
-      let distDia = Math.round(avancosDiarios[i]);
-      const estacaIniDia = currEstaca;
-      let estacaFimDia;
-
-      if (dia === m.diasTotais) {
-        volDia = Number((m.volumeTotal - currVolAcc).toFixed(2));
-        estacaFimDia = Math.round(m.estacaFim);
-        distDia = Math.abs(estacaFimDia - estacaIniDia);
-      } else {
-        estacaFimDia = estacaIniDia + distDia * m.sentido;
-      }
+      const seg = segmentosDiarios[i];
+      const volDia = volumesDiarios[i];
 
       currVolAcc = Number((currVolAcc + volDia).toFixed(2));
-      currEstaca = estacaFimDia;
-
-      const relacaoMetro = distDia > 0 ? Number((volDia / distDia).toFixed(2)) : 0;
+      const relacaoMetro = seg.extensao > 0 ? Number((volDia / seg.extensao).toFixed(2)) : 0;
+      const prodHora = Number((volDia / m.horasDia).toFixed(2));
       const pctConcluido = Number(((currVolAcc / m.volumeTotal) * 100).toFixed(2));
+      const statusTexto = seg.isRepasse ? `Repasse (${seg.passada}ª)` : 'Avanço';
 
       registros.push({
         dia,
         data: formatarDataBR(dt),
-        estacaIni: estacaIniDia,
-        estacaFim: estacaFimDia,
-        avancoDia: distDia,
+        estacaIni: seg.estacaIni,
+        estacaFim: seg.estacaFim,
+        avancoDia: seg.extensao,
+        isRepasse: seg.isRepasse,
+        passada: seg.passada,
+        statusTexto,
+        horasDia: m.horasDia,
         densidadeDia: relacaoMetro,
-        volDia: volDia,
+        prodHora,
+        volDia,
         volAcc: currVolAcc,
         pct: pctConcluido
       });
     }
+
+    const totalExtTrabalhada = registros.reduce((acc, r) => acc + r.avancoDia, 0);
+    const qtdRepasses = registros.filter(r => r.isRepasse).length;
+    const totalHoras = Number((m.diasTotais * m.horasDia).toFixed(2));
 
     estadoAtual = {
       registros,
       parametros: {
         ...m,
         mesAno,
+        permitirRepasse,
+        totalExtTrabalhada,
+        qtdRepasses,
+        totalHoras,
+        mediaPorMetroTrabalhado: m.volumeTotal / totalExtTrabalhada,
         modoTexto: modo === 'volume_diario' ? 'Por Volume Diário (m³/dia)' : 'Por Volume por Metro (m³/m)',
         unidadeLimite: modo === 'volume_diario' ? 'm³/dia' : 'm³/m',
         limMin,
@@ -1036,13 +1282,16 @@
     if (!registros.length) return;
 
     const vols = registros.map(r => r.volDia);
-    const avancos = registros.map(r => r.avancoDia);
+    const prods = registros.map(r => r.prodHora);
     const menorVol = Math.min(...vols);
     const maiorVol = Math.max(...vols);
-    const menorAv = Math.min(...avancos);
-    const maiorAv = Math.max(...avancos);
+    const menorProd = Math.min(...prods);
+    const maiorProd = Math.max(...prods);
     const somaVol = registros[registros.length - 1].volAcc;
-    const somaAvanco = registros.reduce((acc, r) => acc + r.avancoDia, 0);
+
+    const textoRepasse = parametros.qtdRepasses > 0
+      ? `${parametros.qtdRepasses} dia(s) de repasse`
+      : 'Sem repasse';
 
     document.getElementById('auditBar').innerHTML = `
       <div class="audit-item">
@@ -1050,28 +1299,33 @@
         <span>${fmtBR(somaVol)} m³ (100,00%)</span>
       </div>
       <div class="audit-item">
-        <strong>✅ Estacas Exatas (${parametros.passo} em ${parametros.passo} m)</strong>
-        <span>${fmtBR(somaAvanco, 0)} m (${fmtBR(parametros.estacaIni, 0)} ➔ ${fmtBR(parametros.estacaFim, 0)} m)</span>
+        <strong>✅ Pico Diário vs Teto da Draga</strong>
+        <span>${fmtBR(menorVol)} a ${fmtBR(maiorVol)} m³ (Teto: ${fmtBR(parametros.capMaxDraga)})</span>
       </div>
       <div class="audit-item">
-        <strong>📏 Avanço Diário Sorteado</strong>
-        <span>${fmtBR(menorAv, 0)} m a ${fmtBR(maiorAv, 0)} m / dia</span>
+        <strong>⏱️ Produtividade (${fmtBR(parametros.horasDia, 1)} h/dia)</strong>
+        <span>${fmtBR(menorProd)} a ${fmtBR(maiorProd)} m³/h</span>
       </div>
       <div class="audit-item">
-        <strong>📊 Volume Diário Sorteado</strong>
-        <span>${fmtBR(menorVol)} a ${fmtBR(maiorVol)} m³/dia</span>
+        <strong>📏 Estacas (${parametros.passo} em ${parametros.passo} m)</strong>
+        <span>${fmtBR(parametros.estacaIni, 0)} ➔ ${fmtBR(parametros.estacaFim, 0)} m (${textoRepasse})</span>
       </div>
     `;
 
     const tbody = document.getElementById('tbodyDados');
     tbody.innerHTML = registros.map(r => `
-      <tr>
+      <tr class="${r.isRepasse ? 'row-repasse' : ''}">
         <td class="center">${r.dia}</td>
         <td class="center">${r.data}</td>
         <td><strong>${fmtBR(r.estacaIni, 0)}</strong></td>
         <td><strong>${fmtBR(r.estacaFim, 0)}</strong></td>
         <td>${fmtBR(r.avancoDia, 0)}</td>
+        <td class="center">
+          <span class="${r.isRepasse ? 'badge-repasse' : 'badge-avanco'}">${r.statusTexto}</span>
+        </td>
+        <td>${fmtBR(r.horasDia, 1)}</td>
         <td>${fmtBR(r.densidadeDia)}</td>
+        <td>${fmtBR(r.prodHora)}</td>
         <td><strong>${fmtBR(r.volDia)}</strong></td>
         <td>${fmtBR(r.volAcc)}</td>
         <td>${fmtBR(r.pct)}%</td>
@@ -1085,8 +1339,11 @@
         <td class="center">${parametros.diasTotais} dias</td>
         <td>${fmtBR(parametros.estacaIni, 0)}</td>
         <td>${fmtBR(parametros.estacaFim, 0)}</td>
-        <td>${fmtBR(parametros.avancoTotal, 0)}</td>
-        <td>${fmtBR(parametros.relacaoMediaMetro)}</td>
+        <td>${fmtBR(parametros.totalExtTrabalhada, 0)}</td>
+        <td class="center">${textoRepasse}</td>
+        <td>${fmtBR(parametros.totalHoras, 1)}</td>
+        <td>${fmtBR(parametros.mediaPorMetroTrabalhado)}</td>
+        <td>${fmtBR(parametros.prodMediaHora)}</td>
         <td>${fmtBR(parametros.volumeTotal)}</td>
         <td>${fmtBR(parametros.volumeTotal)}</td>
         <td>100,00%</td>
@@ -1103,7 +1360,6 @@
     const { registros, parametros } = estadoAtual;
     if (!registros || !registros.length || !parametros) return;
 
-    // Garante que o Mês/Ano mais recente digitado vá para a planilha mesmo sem novo sorteio
     parametros.mesAno = document.getElementById('mesAno').value.trim() || parametros.mesAno;
 
     const wb = new ExcelJS.Workbook();
@@ -1112,6 +1368,7 @@
 
     const navyFill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F4E78' } };
     const zebraFill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF2F2F2' } };
+    const repasseFill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFF8E1' } };
     const totalFill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD9E1F2' } };
 
     const fontTitle = { name: 'Calibri', size: 16, bold: true, color: { argb: 'FF1F4E78' } };
@@ -1143,14 +1400,20 @@
       ['Mês/Ano de Referência', parametros.mesAno, null],
       ['Data Inicial da Operação', formatarDataBR(parametros.dtIni), null],
       ['Data Final da Operação', formatarDataBR(parametros.dtFim), null],
+      ['Dias Operacionais', parametros.diasTotais, '#,##0'],
+      ['Horas Trabalhadas por Dia (h)', parametros.horasDia, '#,##0.0'],
+      ['Total de Horas Trabalhadas (h)', parametros.totalHoras, '#,##0.0'],
+      ['Produção Máxima Real da Draga (m³/dia)', parametros.capMaxDraga, '#,##0.00'],
+      ['Capacidade Horária Máxima (m³/h)', Number(parametros.prodMaxHora.toFixed(2)), '#,##0.00'],
       ['Volume Total Retirado (m³)', parametros.volumeTotal, '#,##0.00'],
+      ['Meta Diária Média (m³/dia)', Number(parametros.volMedioDia.toFixed(2)), '#,##0.00'],
+      ['Produtividade Média Real (m³/h)', Number(parametros.prodMediaHora.toFixed(2)), '#,##0.00'],
       ['Espaçamento das Estacas (m)', parametros.passo, '#,##0'],
       ['Estaca Inicial (m)', parametros.estacaIni, '#,##0'],
       ['Estaca Final (m)', parametros.estacaFim, '#,##0'],
-      ['Dias Operacionais', parametros.diasTotais, '#,##0'],
-      ['Meta Diária Média (m³)', Number(parametros.volMedioDia.toFixed(2)), '#,##0.00'],
-      ['Avanço Total no Canal (m)', parametros.avancoTotal, '#,##0'],
-      ['Relação Média no Canal (m³/m)', Number(parametros.relacaoMediaMetro.toFixed(2)), '#,##0.00'],
+      ['Extensão Líquida do Canal (m)', parametros.avancoTotal, '#,##0'],
+      ['Extensão Total Trabalhada c/ Repasses (m)', parametros.totalExtTrabalhada, '#,##0'],
+      ['Dias com Repasse de Trecho', parametros.qtdRepasses, '#,##0'],
       ['Modo de Sorteio Utilizado', parametros.modoTexto, null],
       ['Intervalo Configurado (Mín a Máx)', `${fmtBR(parametros.limMin)} a ${fmtBR(parametros.limMax)} ${parametros.unidadeLimite}`, null]
     ];
@@ -1169,12 +1432,12 @@
       if (item[2]) c2.numFmt = item[2];
     });
 
-    ws1.getColumn(1).width = 34;
+    ws1.getColumn(1).width = 40;
     ws1.getColumn(2).width = 36;
 
-    // ABA 2: Distribuição Diária
+    // ABA 2: Distribuição Diária (12 colunas: A até L)
     const ws2 = wb.addWorksheet('Distribuição Diária', { views: [{ showGridLines: true }] });
-    ws2.mergeCells('A1:I1');
+    ws2.mergeCells('A1:L1');
     ws2.getCell('A1').value = 'RELATÓRIO DE DISTRIBUIÇÃO DIÁRIA DE DRAGAGEM NO CANAL';
     ws2.getCell('A1').font = fontTitle;
 
@@ -1183,8 +1446,11 @@
       'Data',
       'Estaca Inicial (m)',
       'Estaca Final (m)',
-      'Avanço Diário (m)',
-      'Volume por Metro (m³/m)',
+      'Trecho / Avanço (m)',
+      'Operação',
+      'Horas Trab. (h)',
+      'Volume / Metro (m³/m)',
+      'Produtividade (m³/h)',
       'Volume Diário (m³)',
       'Volume Acumulado (m³)',
       '% Concluído'
@@ -1204,52 +1470,83 @@
 
     registros.forEach((row, idx) => {
       const r = idx + 4;
+
       ws2.getCell(r, 1).value = row.dia;
       ws2.getCell(r, 1).alignment = { horizontal: 'center' };
 
       ws2.getCell(r, 2).value = row.data;
       ws2.getCell(r, 2).alignment = { horizontal: 'center' };
 
+      // Estaca Inicial (C): 1º dia fixo; avanço puxa Estaca Final anterior (=D{r-1}); repasse repete Estaca Inicial anterior (=C{r-1})
       if (idx === 0) {
         ws2.getCell(r, 3).value = row.estacaIni;
+      } else if (row.isRepasse) {
+        ws2.getCell(r, 3).value = { formula: `C${r - 1}`, result: row.estacaIni };
       } else {
         ws2.getCell(r, 3).value = { formula: `D${r - 1}`, result: row.estacaIni };
       }
       ws2.getCell(r, 3).numFmt = '#,##0';
 
+      // Estaca Final (D): =C{r} + E{r} (ou -)
       ws2.getCell(r, 4).value = { formula: `C${r}${opSinal}E${r}`, result: row.estacaFim };
       ws2.getCell(r, 4).numFmt = '#,##0';
 
-      ws2.getCell(r, 5).value = row.avancoDia;
+      // Trecho / Avanço (E): em repasse puxa =E{r-1} para manter o trecho sincronizado
+      if (row.isRepasse && idx > 0) {
+        ws2.getCell(r, 5).value = { formula: `E${r - 1}`, result: row.avancoDia };
+      } else {
+        ws2.getCell(r, 5).value = row.avancoDia;
+      }
       ws2.getCell(r, 5).numFmt = '#,##0';
 
-      ws2.getCell(r, 6).value = { formula: `IF(E${r}>0,G${r}/E${r},0)`, result: row.densidadeDia };
-      ws2.getCell(r, 6).numFmt = '#,##0.00';
+      // Operação (F)
+      ws2.getCell(r, 6).value = row.statusTexto;
+      ws2.getCell(r, 6).alignment = { horizontal: 'center' };
 
-      ws2.getCell(r, 7).value = row.volDia;
-      ws2.getCell(r, 7).numFmt = '#,##0.00';
+      // Horas Trabalhadas (G)
+      ws2.getCell(r, 7).value = row.horasDia;
+      ws2.getCell(r, 7).numFmt = '#,##0.0';
 
-      if (idx === 0) {
-        ws2.getCell(r, 8).value = { formula: `G${r}`, result: row.volAcc };
-      } else {
-        ws2.getCell(r, 8).value = { formula: `H${r - 1}+G${r}`, result: row.volAcc };
-      }
+      // Volume / Metro (H): =IF(E{r}>0, J{r}/E{r}, 0)
+      ws2.getCell(r, 8).value = { formula: `IF(E${r}>0,J${r}/E${r},0)`, result: row.densidadeDia };
       ws2.getCell(r, 8).numFmt = '#,##0.00';
 
-      ws2.getCell(r, 9).value = {
-        formula: `H${r}/$G$${linhaTotal}`,
+      // Produtividade m³/h (I): =IF(G{r}>0, J{r}/G{r}, 0)
+      ws2.getCell(r, 9).value = { formula: `IF(G${r}>0,J${r}/G${r},0)`, result: row.prodHora };
+      ws2.getCell(r, 9).numFmt = '#,##0.00';
+
+      // Volume Diário (J)
+      ws2.getCell(r, 10).value = row.volDia;
+      ws2.getCell(r, 10).numFmt = '#,##0.00';
+
+      // Volume Acumulado (K)
+      if (idx === 0) {
+        ws2.getCell(r, 11).value = { formula: `J${r}`, result: row.volAcc };
+      } else {
+        ws2.getCell(r, 11).value = { formula: `K${r - 1}+J${r}`, result: row.volAcc };
+      }
+      ws2.getCell(r, 11).numFmt = '#,##0.00';
+
+      // % Concluído (L)
+      ws2.getCell(r, 12).value = {
+        formula: `K${r}/$J$${linhaTotal}`,
         result: Number((row.volAcc / parametros.volumeTotal).toFixed(4))
       };
-      ws2.getCell(r, 9).numFmt = '0.00%';
+      ws2.getCell(r, 12).numFmt = '0.00%';
 
-      for (let c = 1; c <= 9; c++) {
+      for (let c = 1; c <= 12; c++) {
         const cell = ws2.getCell(r, c);
         cell.font = fontRegular;
         cell.border = thinBorder;
-        if (r % 2 === 0) cell.fill = zebraFill;
+        if (row.isRepasse) {
+          cell.fill = repasseFill;
+        } else if (r % 2 === 0) {
+          cell.fill = zebraFill;
+        }
       }
     });
 
+    // Linha de Totalização
     const ultLinhaDados = linhaTotal - 1;
     ws2.getCell(linhaTotal, 1).value = 'TOTAL';
     ws2.getCell(linhaTotal, 1).alignment = { horizontal: 'center' };
@@ -1263,32 +1560,44 @@
     ws2.getCell(linhaTotal, 4).value = { formula: `D${ultLinhaDados}`, result: parametros.estacaFim };
     ws2.getCell(linhaTotal, 4).numFmt = '#,##0';
 
-    ws2.getCell(linhaTotal, 5).value = { formula: `SUM(E4:E${ultLinhaDados})`, result: parametros.avancoTotal };
+    ws2.getCell(linhaTotal, 5).value = { formula: `SUM(E4:E${ultLinhaDados})`, result: parametros.totalExtTrabalhada };
     ws2.getCell(linhaTotal, 5).numFmt = '#,##0';
 
-    ws2.getCell(linhaTotal, 6).value = {
-      formula: `IF(E${linhaTotal}>0,G${linhaTotal}/E${linhaTotal},0)`,
-      result: Number(parametros.relacaoMediaMetro.toFixed(2))
+    ws2.getCell(linhaTotal, 6).value = parametros.qtdRepasses > 0 ? `${parametros.qtdRepasses} repasse(s)` : 'Sem repasse';
+    ws2.getCell(linhaTotal, 6).alignment = { horizontal: 'center' };
+
+    ws2.getCell(linhaTotal, 7).value = { formula: `SUM(G4:G${ultLinhaDados})`, result: parametros.totalHoras };
+    ws2.getCell(linhaTotal, 7).numFmt = '#,##0.0';
+
+    ws2.getCell(linhaTotal, 8).value = {
+      formula: `IF(E${linhaTotal}>0,J${linhaTotal}/E${linhaTotal},0)`,
+      result: Number(parametros.mediaPorMetroTrabalhado.toFixed(2))
     };
-    ws2.getCell(linhaTotal, 6).numFmt = '#,##0.00';
-
-    ws2.getCell(linhaTotal, 7).value = { formula: `SUM(G4:G${ultLinhaDados})`, result: parametros.volumeTotal };
-    ws2.getCell(linhaTotal, 7).numFmt = '#,##0.00';
-
-    ws2.getCell(linhaTotal, 8).value = { formula: `H${ultLinhaDados}`, result: parametros.volumeTotal };
     ws2.getCell(linhaTotal, 8).numFmt = '#,##0.00';
 
-    ws2.getCell(linhaTotal, 9).value = { formula: `I${ultLinhaDados}`, result: 1 };
-    ws2.getCell(linhaTotal, 9).numFmt = '0.00%';
+    ws2.getCell(linhaTotal, 9).value = {
+      formula: `IF(G${linhaTotal}>0,J${linhaTotal}/G${linhaTotal},0)`,
+      result: Number(parametros.prodMediaHora.toFixed(2))
+    };
+    ws2.getCell(linhaTotal, 9).numFmt = '#,##0.00';
 
-    for (let c = 1; c <= 9; c++) {
+    ws2.getCell(linhaTotal, 10).value = { formula: `SUM(J4:J${ultLinhaDados})`, result: parametros.volumeTotal };
+    ws2.getCell(linhaTotal, 10).numFmt = '#,##0.00';
+
+    ws2.getCell(linhaTotal, 11).value = { formula: `K${ultLinhaDados}`, result: parametros.volumeTotal };
+    ws2.getCell(linhaTotal, 11).numFmt = '#,##0.00';
+
+    ws2.getCell(linhaTotal, 12).value = { formula: `L${ultLinhaDados}`, result: 1 };
+    ws2.getCell(linhaTotal, 12).numFmt = '0.00%';
+
+    for (let c = 1; c <= 12; c++) {
       const cell = ws2.getCell(linhaTotal, c);
       cell.font = fontBoldDark;
       cell.fill = totalFill;
       cell.border = thinBorder;
     }
 
-    const larguras = [10, 15, 20, 20, 20, 24, 20, 24, 15];
+    const larguras = [10, 14, 19, 19, 20, 16, 16, 22, 22, 20, 23, 15];
     larguras.forEach((w, i) => {
       ws2.getColumn(i + 1).width = w;
     });
@@ -1316,14 +1625,14 @@
     });
   });
 
-  ['dataInicio', 'dataFim', 'volumeTotal', 'estacaInicial', 'estacaFinal', 'intervaloEstaca'].forEach(id => {
+  ['dataInicio', 'dataFim', 'volumeTotal', 'capacidadeDraga', 'horasDia', 'estacaInicial', 'estacaFinal', 'intervaloEstaca'].forEach(id => {
     document.getElementById(id).addEventListener('change', () => {
       atualizarTextosEInterface(true);
       gerarDistribuicao();
     });
   });
 
-  ['limiteMin', 'limiteMax', 'variacaoEstaca'].forEach(id => {
+  ['limiteMin', 'limiteMax', 'variacaoEstaca', 'permitirRepasse'].forEach(id => {
     document.getElementById(id).addEventListener('change', () => {
       atualizarTextosEInterface(false);
       gerarDistribuicao();
