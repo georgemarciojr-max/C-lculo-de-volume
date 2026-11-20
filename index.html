@@ -83,6 +83,12 @@
       margin-top: 14px;
     }
 
+    .grid-sub-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
     .card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -224,7 +230,7 @@
       font-size: 0.85rem;
       margin-bottom: 18px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
       gap: 10px;
     }
 
@@ -303,7 +309,7 @@
       overflow-x: auto;
       border: 1px solid var(--border);
       border-radius: 10px;
-      max-height: 540px;
+      max-height: 560px;
       overflow-y: auto;
     }
 
@@ -374,7 +380,7 @@
 <div class="container">
   <header>
     <h1>⚓ Gerador de Distribuição Diária de Dragagem</h1>
-    <p>Sorteio aleatório controlado por limites com fechamento matemático exato de 100% do volume e das estacas.</p>
+    <p>Sorteio aleatório com estacas inteiras de 20 em 20 metros e fechamento exato de 100% do volume.</p>
   </header>
 
   <div class="grid-2">
@@ -383,33 +389,42 @@
       <h2>📋 Parâmetros Gerais</h2>
       <div class="form-group">
         <label for="mesAno">Mês / Ano de Referência</label>
-        <input type="text" id="mesAno" value="Setembro / 2026" />
+        <input type="text" id="mesAno" value="Outubro / 2026" />
       </div>
       <div class="form-group">
         <label for="dataInicio">Data Inicial</label>
-        <input type="date" id="dataInicio" value="2026-09-01" />
+        <input type="date" id="dataInicio" value="2026-10-01" />
       </div>
       <div class="form-group">
         <label for="dataFim">Data Final</label>
-        <input type="date" id="dataFim" value="2026-09-30" />
+        <input type="date" id="dataFim" value="2026-10-18" />
       </div>
     </div>
 
     <!-- Coluna 2: Parâmetros do Canal -->
     <div class="card" style="margin-bottom: 0;">
-      <h2>📏 Parâmetros do Canal e Dragagem</h2>
-      <div class="form-group">
-        <label for="volumeTotal">Volume Total Retirado (m³)</label>
-        <input type="number" id="volumeTotal" value="45000" min="1" step="500" />
+      <h2>📏 Parâmetros do Canal e Estaqueamento</h2>
+      <div class="grid-sub-2 form-group">
+        <div>
+          <label for="volumeTotal">Volume Total Retirado (m³)</label>
+          <input type="number" id="volumeTotal" value="25000" min="1" step="500" />
+        </div>
+        <div>
+          <label for="intervaloEstaca">Espaçamento das Estacas (m)</label>
+          <input type="number" id="intervaloEstaca" value="20" min="1" step="5" />
+        </div>
       </div>
-      <div class="form-group">
-        <label for="estacaInicial">Estaca Inicial (m)</label>
-        <input type="number" id="estacaInicial" value="0" min="0" step="10" />
+      <div class="grid-sub-2 form-group">
+        <div>
+          <label for="estacaInicial">Estaca Inicial (m)</label>
+          <input type="number" id="estacaInicial" value="16600" min="0" step="20" />
+        </div>
+        <div>
+          <label for="estacaFinal">Estaca Final (m)</label>
+          <input type="number" id="estacaFinal" value="17320" min="0" step="20" />
+        </div>
       </div>
-      <div class="form-group">
-        <label for="estacaFinal">Estaca Final (m)</label>
-        <input type="number" id="estacaFinal" value="1500" min="0" step="10" />
-      </div>
+      <div class="hint">As estacas inicial, final e diárias avançam sempre em múltiplos exatos do espaçamento (ex.: 20 em 20 m).</div>
     </div>
   </div>
 
@@ -430,15 +445,15 @@
         <input type="radio" name="modoSorteio" value="volume_diario" checked />
         <div>
           <div class="radio-pill-title">Opção 1: Limitar por Volume Diário (m³/dia)</div>
-          <div class="radio-pill-desc">Você define o mínimo e máximo de m³ sorteados por dia. O avanço de estaca acompanha de forma coerente.</div>
+          <div class="radio-pill-desc">Você define o mínimo e máximo de m³ por dia. As estacas avançam de 20 em 20 m acompanhando o volume.</div>
         </div>
       </label>
 
       <label class="radio-pill" id="pillModoEstaca">
         <input type="radio" name="modoSorteio" value="volume_metro" />
         <div>
-          <div class="radio-pill-title">Opção 2: Limitar por Volume por Estaca/Metro (m³/m)</div>
-          <div class="radio-pill-desc">Você define o intervalo de m³ por metro linear de canal e o sistema calcula os volumes diários.</div>
+          <div class="radio-pill-title">Opção 2: Limitar por Volume por Metro (m³/m)</div>
+          <div class="radio-pill-desc">Você define o intervalo de m³ por metro linear (m³/m) e o sistema calcula os volumes diários.</div>
         </div>
       </label>
     </div>
@@ -446,25 +461,25 @@
     <div class="grid-3">
       <div class="form-group">
         <label id="lblMin" for="limiteMin">Volume Mínimo por Dia (m³)</label>
-        <input type="number" id="limiteMin" value="1125" step="25" />
+        <input type="number" id="limiteMin" value="1040" step="25" />
         <div class="hint" id="hintMin">Deve ser menor ou igual à média diária.</div>
       </div>
 
       <div class="form-group">
         <label id="lblMax" for="limiteMax">Volume Máximo por Dia (m³)</label>
-        <input type="number" id="limiteMax" value="1875" step="25" />
+        <input type="number" id="limiteMax" value="1735" step="25" />
         <div class="hint" id="hintMax">Deve ser maior ou igual à média diária.</div>
       </div>
 
       <div class="form-group">
-        <label for="variacaoEstaca">Oscilação da Relação m³/Metro (%)</label>
+        <label for="variacaoEstaca">Oscilação da Densidade m³/Metro (%)</label>
         <input type="number" id="variacaoEstaca" value="20" min="3" max="45" step="1" />
-        <div class="hint">Garante que cada trecho tenha densidade (m³/m) diferente sem distorções irreais.</div>
+        <div class="hint">Varia o rendimento m³/m entre trechos mantendo as estacas sempre exatas de 20 em 20 m.</div>
       </div>
     </div>
 
     <div class="formula-box">
-      <strong>📐 Regra de Coerência Ativa:</strong> Todos os dias (do 1º ao último) respeitam estritamente o intervalo <code>[Mínimo, Máximo]</code>. O avanço diário é acoplado ao volume do dia com variação controlada de assoreamento, garantindo que <code>Soma(Volumes) = Volume Total</code> e <code>Estaca Final do Último Dia = Estaca Final</code> sem erros de arredondamento.
+      <strong>📐 Regra de Estaqueamento Exato Ativa:</strong> Nenhum dia terá estaca quebrada. O sistema converte o trecho total em blocos inteiros de <code>20 m</code> (ou o espaçamento definido), sorteia estacas inteiras por dia (<code>20 m</code>, <code>40 m</code>, <code>60 m</code>...) e acopla o volume diário dentro do intervalo <code>[Mínimo, Máximo]</code> fechando em <strong>100,00%</strong>.
     </div>
   </div>
 
@@ -510,13 +525,11 @@
 </div>
 
 <script>
-  // Estado global da distribuição atual para que o botão de download exporte exatamente o que está na tela
   let estadoAtual = {
     registros: [],
     parametros: null
   };
 
-  // Formata número no padrão brasileiro para exibição na tela
   function fmtBR(valor, casas = 2) {
     return Number(valor).toLocaleString('pt-BR', {
       minimumFractionDigits: casas,
@@ -524,10 +537,10 @@
     });
   }
 
-  // Converte data YYYY-MM-DD sem bug de fuso horário no Brasil
   function parseDataLocal(str) {
     if (!str) return null;
     const [y, m, d] = str.split('-').map(Number);
+    if (!y || !m || !d) return null;
     return new Date(y, m - 1, d);
   }
 
@@ -539,24 +552,113 @@
   }
 
   /**
-   * Algoritmo de Redistribuição Exata em Centésimos:
-   * Gera N valores onde cada item i respeita estritamente [minArr[i], maxArr[i]]
-   * e a soma de todos os itens arredondados em 2 casas decimais fecha 100% em somaTotal.
+   * Sorteia N inteiros onde cada item i está em [minArr[i], maxArr[i]]
+   * e a soma total fecha exatamente em targetInt.
    */
-  function sortearComLimitesExatos(minArr, maxArr, somaTotal) {
+  function sortearInteirosComLimitesExatos(minArr, maxArr, targetInt) {
+    const n = minArr.length;
+    const minI = minArr.map(v => Math.max(1, Math.round(v)));
+    const maxI = maxArr.map((v, i) => Math.max(minI[i], Math.round(v)));
+
+    const sumMin = minI.reduce((a, b) => a + b, 0);
+    const sumMax = maxI.reduce((a, b) => a + b, 0);
+
+    if (targetInt < sumMin) {
+      let diff = sumMin - targetInt;
+      for (let i = 0; i < n && diff > 0; i++) {
+        const cut = Math.min(diff, Math.max(0, minI[i] - 1));
+        minI[i] -= cut;
+        diff -= cut;
+      }
+    } else if (targetInt > sumMax) {
+      let diff = targetInt - sumMax;
+      for (let i = 0; i < n && diff > 0; i++) {
+        const add = Math.ceil(diff / (n - i));
+        maxI[i] += add;
+        diff -= add;
+      }
+    }
+
+    const val = new Array(n);
+    let currentSum = 0;
+
+    for (let i = 0; i < n; i++) {
+      const span = maxI[i] - minI[i];
+      const r = span > 0 ? Math.floor(Math.random() * (span + 1)) : 0;
+      val[i] = minI[i] + r;
+      currentSum += val[i];
+    }
+
+    let diff = targetInt - currentSum;
+    let iter = 0;
+    while (diff !== 0 && iter < 30000) {
+      iter++;
+      const candidatos = [];
+      for (let i = 0; i < n; i++) {
+        if (diff > 0 && val[i] < maxI[i]) candidatos.push(i);
+        else if (diff < 0 && val[i] > minI[i]) candidatos.push(i);
+      }
+      if (candidatos.length === 0) break;
+
+      for (let i = candidatos.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [candidatos[i], candidatos[j]] = [candidatos[j], candidatos[i]];
+      }
+
+      for (const idx of candidatos) {
+        if (diff === 0) break;
+        if (diff > 0) {
+          const folga = maxI[idx] - val[idx];
+          const passoMax = Math.max(1, Math.ceil(diff / Math.max(1, candidatos.length / 2)));
+          const delta = Math.min(folga, diff, Math.floor(Math.random() * passoMax) + 1);
+          val[idx] += delta;
+          diff -= delta;
+        } else {
+          const folga = val[idx] - minI[idx];
+          const absDiff = Math.abs(diff);
+          const passoMax = Math.max(1, Math.ceil(absDiff / Math.max(1, candidatos.length / 2)));
+          const delta = Math.min(folga, absDiff, Math.floor(Math.random() * passoMax) + 1);
+          val[idx] -= delta;
+          diff += delta;
+        }
+      }
+    }
+
+    // Varredura final determinística caso reste diferença residual
+    if (diff !== 0) {
+      for (let i = 0; i < n && diff !== 0; i++) {
+        if (diff > 0 && val[i] < maxI[i]) {
+          const add = Math.min(diff, maxI[i] - val[i]);
+          val[i] += add;
+          diff -= add;
+        } else if (diff < 0 && val[i] > minI[i]) {
+          const sub = Math.min(Math.abs(diff), val[i] - minI[i]);
+          val[i] -= sub;
+          diff += sub;
+        }
+      }
+    }
+
+    return val;
+  }
+
+  /**
+   * Sorteia N valores decimais em centésimos dentro de [minArr[i], maxArr[i]]
+   * fechando exatamente em somaTotal (2 casas decimais).
+   */
+  function sortearDecimaisComLimitesExatos(minArr, maxArr, somaTotal) {
     const n = minArr.length;
     const targetCents = Math.round(somaTotal * 100);
-    const minC = minArr.map(v => Math.round(v * 100));
+    const minC = minArr.map(v => Math.max(1, Math.round(v * 100)));
     const maxC = maxArr.map((v, i) => Math.max(minC[i], Math.round(v * 100)));
 
     const sumMin = minC.reduce((a, b) => a + b, 0);
     const sumMax = maxC.reduce((a, b) => a + b, 0);
 
-    // Caso os limites por arredondamento fiquem 1 centavo fora, ajusta proporcionalmente
     if (targetCents < sumMin) {
       let diff = sumMin - targetCents;
       for (let i = 0; i < n && diff > 0; i++) {
-        const cut = Math.min(diff, minC[i] - 1);
+        const cut = Math.min(diff, Math.max(0, minC[i] - 1));
         minC[i] -= cut;
         diff -= cut;
       }
@@ -569,7 +671,6 @@
       }
     }
 
-    // 1. Sorteio inicial uniforme dentro do intervalo de cada dia
     const valC = new Array(n);
     let currentSum = 0;
     for (let i = 0; i < n; i++) {
@@ -579,10 +680,9 @@
       currentSum += valC[i];
     }
 
-    // 2. Redistribuição aleatória da diferença até zerar os centavos
     let diff = targetCents - currentSum;
     let iter = 0;
-    while (diff !== 0 && iter < 25000) {
+    while (diff !== 0 && iter < 30000) {
       iter++;
       const candidatos = [];
       for (let i = 0; i < n; i++) {
@@ -591,7 +691,6 @@
       }
       if (candidatos.length === 0) break;
 
-      // Embaralha candidatos para manter aleatoriedade limpa
       for (let i = candidatos.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [candidatos[i], candidatos[j]] = [candidatos[j], candidatos[i]];
@@ -616,6 +715,21 @@
       }
     }
 
+    // Varredura final determinística caso reste diferença residual
+    if (diff !== 0) {
+      for (let i = 0; i < n && diff !== 0; i++) {
+        if (diff > 0 && valC[i] < maxC[i]) {
+          const add = Math.min(diff, maxC[i] - valC[i]);
+          valC[i] += add;
+          diff -= add;
+        } else if (diff < 0 && valC[i] > minC[i]) {
+          const sub = Math.min(Math.abs(diff), valC[i] - minC[i]);
+          valC[i] -= sub;
+          diff += sub;
+        }
+      }
+    }
+
     return valC.map(c => Number((c / 100).toFixed(2)));
   }
 
@@ -627,17 +741,27 @@
   function calcularMediasAtuais() {
     const dtIni = parseDataLocal(document.getElementById('dataInicio').value);
     const dtFim = parseDataLocal(document.getElementById('dataFim').value);
-    const volumeTotal = parseFloat(document.getElementById('volumeTotal').value) || 0;
-    const estacaIni = parseFloat(document.getElementById('estacaInicial').value) || 0;
-    const estacaFim = parseFloat(document.getElementById('estacaFinal').value) || 0;
+    const volumeBruto = parseFloat(document.getElementById('volumeTotal').value);
+    const estacaIni = parseFloat(document.getElementById('estacaInicial').value);
+    const estacaFim = parseFloat(document.getElementById('estacaFinal').value);
+    const passo = parseFloat(document.getElementById('intervaloEstaca').value);
 
-    if (!dtIni || !dtFim || dtFim < dtIni || estacaIni === estacaFim || volumeTotal <= 0) {
+    if (
+      !dtIni || !dtFim || dtFim < dtIni ||
+      isNaN(volumeBruto) || volumeBruto <= 0 ||
+      isNaN(estacaIni) || isNaN(estacaFim) ||
+      estacaIni < 0 || estacaFim < 0 ||
+      estacaIni === estacaFim ||
+      isNaN(passo) || passo <= 0 || !Number.isInteger(passo)
+    ) {
       return null;
     }
 
+    const volumeTotal = Number(volumeBruto.toFixed(2));
     const diasTotais = Math.round((dtFim - dtIni) / (1000 * 60 * 60 * 24)) + 1;
     const sentido = estacaFim >= estacaIni ? 1 : -1;
     const avancoTotal = Math.abs(estacaFim - estacaIni);
+    const totalBlocosEstaca = Math.round(avancoTotal / passo);
     const volMedioDia = volumeTotal / diasTotais;
     const avancoMedioDia = avancoTotal / diasTotais;
     const relacaoMediaMetro = volumeTotal / avancoTotal;
@@ -649,6 +773,8 @@
       volumeTotal,
       estacaIni,
       estacaFim,
+      passo,
+      totalBlocosEstaca,
       sentido,
       avancoTotal,
       volMedioDia,
@@ -658,6 +784,12 @@
   }
 
   function atualizarTextosEInterface(ajustarInputsAutomaticamente = false) {
+    const passoAtual = parseFloat(document.getElementById('intervaloEstaca').value);
+    if (!isNaN(passoAtual) && passoAtual > 0 && Number.isInteger(passoAtual)) {
+      document.getElementById('estacaInicial').step = String(passoAtual);
+      document.getElementById('estacaFinal').step = String(passoAtual);
+    }
+
     const m = calcularMediasAtuais();
     const modo = lerModoSelecionado();
 
@@ -672,21 +804,21 @@
     const inputMax = document.getElementById('limiteMax');
 
     if (!m) {
-      document.getElementById('textoMedias').innerHTML = '⚠️ Verifique as datas, estacas e volume informados.';
+      document.getElementById('textoMedias').innerHTML = '⚠️ Verifique as datas, estacas, espaçamento e volume informados.';
       return;
     }
 
     document.getElementById('textoMedias').innerHTML =
-      `<strong>Médias de Referência:</strong> ${m.diasTotais} dias operacionais &nbsp;|&nbsp; ` +
+      `<strong>Médias:</strong> ${m.diasTotais} dias (${m.totalBlocosEstaca} estacas de ${m.passo} m) &nbsp;|&nbsp; ` +
       `<strong>Volume Médio:</strong> ${fmtBR(m.volMedioDia)} m³/dia &nbsp;|&nbsp; ` +
       `<strong>Avanço Médio:</strong> ${fmtBR(m.avancoMedioDia)} m/dia &nbsp;|&nbsp; ` +
-      `<strong>Densidade Média:</strong> ${fmtBR(m.relacaoMediaMetro)} m³/m`;
+      `<strong>Densidade Média:</strong> ${fmtBR(m.relacaoMediaMetro)} m³/m (${fmtBR(m.relacaoMediaMetro * m.passo)} m³/estaca)`;
 
     if (modo === 'volume_diario') {
       lblMin.textContent = 'Volume Mínimo por Dia (m³/dia)';
       lblMax.textContent = 'Volume Máximo por Dia (m³/dia)';
-      hintMin.textContent = `Para fechar a conta, deve ser ≤ ${fmtBR(m.volMedioDia)} m³/dia`;
-      hintMax.textContent = `Para fechar a conta, deve ser ≥ ${fmtBR(m.volMedioDia)} m³/dia`;
+      hintMin.textContent = `Deve ser ≤ ${fmtBR(m.volMedioDia)} m³/dia`;
+      hintMax.textContent = `Deve ser ≥ ${fmtBR(m.volMedioDia)} m³/dia`;
       inputMin.step = '25';
       inputMax.step = '25';
       if (ajustarInputsAutomaticamente) {
@@ -694,10 +826,10 @@
         inputMax.value = (m.volMedioDia * 1.25).toFixed(2);
       }
     } else {
-      lblMin.textContent = 'Volume Mínimo por Estaca/Metro (m³/m)';
-      lblMax.textContent = 'Volume Máximo por Estaca/Metro (m³/m)';
-      hintMin.textContent = `Para fechar a conta, deve ser ≤ ${fmtBR(m.relacaoMediaMetro)} m³/m`;
-      hintMax.textContent = `Para fechar a conta, deve ser ≥ ${fmtBR(m.relacaoMediaMetro)} m³/m`;
+      lblMin.textContent = 'Volume Mínimo por Metro (m³/m)';
+      lblMax.textContent = 'Volume Máximo por Metro (m³/m)';
+      hintMin.textContent = `Deve ser ≤ ${fmtBR(m.relacaoMediaMetro)} m³/m (equiv. ${fmtBR(m.relacaoMediaMetro * m.passo)} m³/estaca)`;
+      hintMax.textContent = `Deve ser ≥ ${fmtBR(m.relacaoMediaMetro)} m³/m`;
       inputMin.step = '1';
       inputMax.step = '1';
       if (ajustarInputsAutomaticamente) {
@@ -714,25 +846,51 @@
 
     const dtIni = parseDataLocal(document.getElementById('dataInicio').value);
     const dtFim = parseDataLocal(document.getElementById('dataFim').value);
-    const volumeTotal = parseFloat(document.getElementById('volumeTotal').value);
+    const volumeBruto = parseFloat(document.getElementById('volumeTotal').value);
     const estacaIni = parseFloat(document.getElementById('estacaInicial').value);
     const estacaFim = parseFloat(document.getElementById('estacaFinal').value);
-    const mesAno = document.getElementById('mesAno').value.trim() || 'Setembro / 2026';
+    const passo = parseFloat(document.getElementById('intervaloEstaca').value);
+    const mesAno = document.getElementById('mesAno').value.trim() || 'Outubro / 2026';
 
     if (!dtIni || !dtFim || dtFim < dtIni) {
       mostrarErro('⚠️ A Data Final deve ser igual ou posterior à Data Inicial.');
       return;
     }
-    if (isNaN(estacaIni) || isNaN(estacaFim) || estacaIni === estacaFim) {
+    if (isNaN(passo) || passo <= 0 || !Number.isInteger(passo)) {
+      mostrarErro('⚠️ O Espaçamento das Estacas deve ser um número inteiro positivo (ex.: 20).');
+      return;
+    }
+    if (isNaN(estacaIni) || isNaN(estacaFim) || estacaIni < 0 || estacaFim < 0) {
+      mostrarErro('⚠️ As Estacas Inicial e Final devem ser números válidos maiores ou iguais a zero.');
+      return;
+    }
+    if (estacaIni === estacaFim) {
       mostrarErro('⚠️ A Estaca Final deve ser diferente da Estaca Inicial.');
       return;
     }
-    if (isNaN(volumeTotal) || volumeTotal <= 0) {
+    if (!Number.isInteger(estacaIni) || !Number.isInteger(estacaFim) || estacaIni % passo !== 0 || estacaFim % passo !== 0) {
+      mostrarErro(`⚠️ A Estaca Inicial (${estacaIni} m) e a Estaca Final (${estacaFim} m) precisam ser números inteiros e múltiplos exatos de ${passo} em ${passo} metros!`);
+      return;
+    }
+    if (isNaN(volumeBruto) || volumeBruto <= 0) {
       mostrarErro('⚠️ Informe um Volume Total válido maior que zero.');
       return;
     }
 
     const m = calcularMediasAtuais();
+    if (!m) {
+      mostrarErro('⚠️ Verifique os parâmetros operacionais informados.');
+      return;
+    }
+
+    if (m.totalBlocosEstaca < m.diasTotais) {
+      mostrarErro(
+        `⚠️ Trecho muito curto para avançar de ${passo} em ${passo} m em todos os dias! ` +
+        `De ${fmtBR(estacaIni, 0)} m a ${fmtBR(estacaFim, 0)} m existem apenas ${m.totalBlocosEstaca} estacas de ${passo} m para distribuir em ${m.diasTotais} dias.`
+      );
+      return;
+    }
+
     const modo = lerModoSelecionado();
     const limMin = parseFloat(document.getElementById('limiteMin').value);
     const limMax = parseFloat(document.getElementById('limiteMax').value);
@@ -758,49 +916,61 @@
       }
     } else {
       if (limMin * m.avancoTotal > m.volumeTotal + 0.05) {
-        mostrarErro(`⚠️ Volume Mínimo por Metro muito alto! Para fechar ${fmtBR(m.volumeTotal)} m³ em ${fmtBR(m.avancoTotal)} m, o mínimo deve ser ≤ ${fmtBR(m.relacaoMediaMetro)} m³/m.`);
+        mostrarErro(`⚠️ Volume Mínimo por Metro muito alto! Para fechar ${fmtBR(m.volumeTotal)} m³ em ${fmtBR(m.avancoTotal, 0)} m, o mínimo deve ser ≤ ${fmtBR(m.relacaoMediaMetro)} m³/m.`);
         return;
       }
       if (limMax * m.avancoTotal < m.volumeTotal - 0.05) {
-        mostrarErro(`⚠️ Volume Máximo por Metro muito baixo! Para fechar ${fmtBR(m.volumeTotal)} m³ em ${fmtBR(m.avancoTotal)} m, o máximo deve ser ≥ ${fmtBR(m.relacaoMediaMetro)} m³/m.`);
+        mostrarErro(`⚠️ Volume Máximo por Metro muito baixo! Para fechar ${fmtBR(m.volumeTotal)} m³ em ${fmtBR(m.avancoTotal, 0)} m, o máximo deve ser ≥ ${fmtBR(m.relacaoMediaMetro)} m³/m.`);
         return;
       }
     }
 
     cardResultados.style.display = 'block';
 
-    let volumesDiarios = [];
+    // Define limites de blocos inteiros de estaca (ex: 1, 2 ou 3 estacas de 20m por dia)
+    const mediaBlocosDia = m.totalBlocosEstaca / m.diasTotais;
+    const minBlocosGlobal = Math.max(1, Math.floor(mediaBlocosDia * (1 - varPct)));
+    const maxBlocosGlobal = Math.max(minBlocosGlobal + 1, Math.ceil(mediaBlocosDia * (1 + varPct)));
+
     let avancosDiarios = [];
+    let volumesDiarios = [];
 
     if (modo === 'volume_diario') {
-      // 1. Sorteia os volumes diários estritamente dentro de [limMin, limMax] fechando 100% em volumeTotal
+      // 1. Sorteia volumes diários estritamente dentro de [limMin, limMax] fechando 100% em volumeTotal
       const minVolArr = new Array(m.diasTotais).fill(limMin);
       const maxVolArr = new Array(m.diasTotais).fill(limMax);
-      volumesDiarios = sortearComLimitesExatos(minVolArr, maxVolArr, m.volumeTotal);
+      volumesDiarios = sortearDecimaisComLimitesExatos(minVolArr, maxVolArr, m.volumeTotal);
 
-      // 2. Calcula intervalos de avanço diário acoplados ao volume do dia (coerência física: dias de maior volume avançam de forma compatível, mas com densidade m³/m variável)
-      const avancoEsperado = volumesDiarios.map(v => v / m.relacaoMediaMetro);
-      const minAvArr = avancoEsperado.map(a => Math.max(0.5, a * (1 - varPct)));
-      const maxAvArr = avancoEsperado.map(a => a * (1 + varPct));
-      avancosDiarios = sortearComLimitesExatos(minAvArr, maxAvArr, m.avancoTotal);
+      // 2. Sorteia blocos inteiros de estacas (múltiplos de 20 m) proporcionalmente ao volume de cada dia
+      const minBlocosArr = [];
+      const maxBlocosArr = [];
+      for (let i = 0; i < m.diasTotais; i++) {
+        const blocosIdeais = (volumesDiarios[i] / m.relacaoMediaMetro) / passo;
+        const bMin = Math.max(1, Math.floor(blocosIdeais * (1 - varPct * 0.7)));
+        const bMax = Math.max(bMin, Math.ceil(blocosIdeais * (1 + varPct * 0.7)));
+        minBlocosArr.push(Math.min(bMin, Math.floor(mediaBlocosDia)));
+        maxBlocosArr.push(Math.max(bMax, Math.ceil(mediaBlocosDia)));
+      }
+
+      const blocosSorteados = sortearInteirosComLimitesExatos(minBlocosArr, maxBlocosArr, m.totalBlocosEstaca);
+      avancosDiarios = blocosSorteados.map(b => b * passo);
     } else {
-      // Modo por Metro/Estaca (m³/m):
-      // 1. Sorteia avanços diários com variação natural em torno do avanço médio
-      const minAv = Math.max(0.5, m.avancoMedioDia * (1 - varPct));
-      const maxAv = m.avancoMedioDia * (1 + varPct);
-      const minAvArr = new Array(m.diasTotais).fill(minAv);
-      const maxAvArr = new Array(m.diasTotais).fill(maxAv);
-      avancosDiarios = sortearComLimitesExatos(minAvArr, maxAvArr, m.avancoTotal);
+      // Modo por Metro (m³/m):
+      // 1. Sorteia blocos inteiros de estacas (múltiplos de 20 m) por dia
+      const minBlocosArr = new Array(m.diasTotais).fill(minBlocosGlobal);
+      const maxBlocosArr = new Array(m.diasTotais).fill(maxBlocosGlobal);
+      const blocosSorteados = sortearInteirosComLimitesExatos(minBlocosArr, maxBlocosArr, m.totalBlocosEstaca);
+      avancosDiarios = blocosSorteados.map(b => b * passo);
 
-      // 2. Para cada dia, o volume permitido é [avancoDia * limMin, avancoDia * limMax], garantindo 100% que (volDia / avancoDia) fique dentro de [limMin, limMax]
+      // 2. Para cada dia, o volume permitido respeita [avancoDia * limMin, avancoDia * limMax]
       const minVolArr = avancosDiarios.map(av => av * limMin);
       const maxVolArr = avancosDiarios.map(av => av * limMax);
-      volumesDiarios = sortearComLimitesExatos(minVolArr, maxVolArr, m.volumeTotal);
+      volumesDiarios = sortearDecimaisComLimitesExatos(minVolArr, maxVolArr, m.volumeTotal);
     }
 
-    // Monta os registros diários contínuos
+    // Monta registros diários com estacas 100% inteiras de 20 em 20 m
     const registros = [];
-    let currEstaca = m.estacaIni;
+    let currEstaca = Math.round(m.estacaIni);
     let currVolAcc = 0;
 
     for (let i = 0; i < m.diasTotais; i++) {
@@ -808,16 +978,16 @@
       const dt = new Date(m.dtIni.getFullYear(), m.dtIni.getMonth(), m.dtIni.getDate() + i);
 
       let volDia = volumesDiarios[i];
-      let distDia = avancosDiarios[i];
-      let estacaIniDia = Number(currEstaca.toFixed(2));
+      let distDia = Math.round(avancosDiarios[i]);
+      const estacaIniDia = currEstaca;
       let estacaFimDia;
 
       if (dia === m.diasTotais) {
         volDia = Number((m.volumeTotal - currVolAcc).toFixed(2));
-        estacaFimDia = Number(m.estacaFim.toFixed(2));
-        distDia = Number(Math.abs(estacaFimDia - estacaIniDia).toFixed(2));
+        estacaFimDia = Math.round(m.estacaFim);
+        distDia = Math.abs(estacaFimDia - estacaIniDia);
       } else {
-        estacaFimDia = Number((estacaIniDia + distDia * m.sentido).toFixed(2));
+        estacaFimDia = estacaIniDia + distDia * m.sentido;
       }
 
       currVolAcc = Number((currVolAcc + volDia).toFixed(2));
@@ -844,7 +1014,8 @@
       parametros: {
         ...m,
         mesAno,
-        modoTexto: modo === 'volume_diario' ? 'Por Volume Diário (m³/dia)' : 'Por Volume por Estaca/Metro (m³/m)',
+        modoTexto: modo === 'volume_diario' ? 'Por Volume Diário (m³/dia)' : 'Por Volume por Metro (m³/m)',
+        unidadeLimite: modo === 'volume_diario' ? 'm³/dia' : 'm³/m',
         limMin,
         limMax
       }
@@ -865,11 +1036,11 @@
     if (!registros.length) return;
 
     const vols = registros.map(r => r.volDia);
-    const dens = registros.map(r => r.densidadeDia);
+    const avancos = registros.map(r => r.avancoDia);
     const menorVol = Math.min(...vols);
     const maiorVol = Math.max(...vols);
-    const menorDens = Math.min(...dens);
-    const maiorDens = Math.max(...dens);
+    const menorAv = Math.min(...avancos);
+    const maiorAv = Math.max(...avancos);
     const somaVol = registros[registros.length - 1].volAcc;
     const somaAvanco = registros.reduce((acc, r) => acc + r.avancoDia, 0);
 
@@ -879,16 +1050,16 @@
         <span>${fmtBR(somaVol)} m³ (100,00%)</span>
       </div>
       <div class="audit-item">
-        <strong>✅ Fechamento de Estacas</strong>
-        <span>${fmtBR(somaAvanco)} m (${fmtBR(parametros.estacaIni)} ➔ ${fmtBR(parametros.estacaFim)} m)</span>
+        <strong>✅ Estacas Exatas (${parametros.passo} em ${parametros.passo} m)</strong>
+        <span>${fmtBR(somaAvanco, 0)} m (${fmtBR(parametros.estacaIni, 0)} ➔ ${fmtBR(parametros.estacaFim, 0)} m)</span>
       </div>
       <div class="audit-item">
-        <strong>📊 Intervalo Sorteado (Dia)</strong>
+        <strong>📏 Avanço Diário Sorteado</strong>
+        <span>${fmtBR(menorAv, 0)} m a ${fmtBR(maiorAv, 0)} m / dia</span>
+      </div>
+      <div class="audit-item">
+        <strong>📊 Volume Diário Sorteado</strong>
         <span>${fmtBR(menorVol)} a ${fmtBR(maiorVol)} m³/dia</span>
-      </div>
-      <div class="audit-item">
-        <strong>📏 Variação por Estaca/Metro</strong>
-        <span>${fmtBR(menorDens)} a ${fmtBR(maiorDens)} m³/m</span>
       </div>
     `;
 
@@ -897,9 +1068,9 @@
       <tr>
         <td class="center">${r.dia}</td>
         <td class="center">${r.data}</td>
-        <td>${fmtBR(r.estacaIni)}</td>
-        <td>${fmtBR(r.estacaFim)}</td>
-        <td>${fmtBR(r.avancoDia)}</td>
+        <td><strong>${fmtBR(r.estacaIni, 0)}</strong></td>
+        <td><strong>${fmtBR(r.estacaFim, 0)}</strong></td>
+        <td>${fmtBR(r.avancoDia, 0)}</td>
         <td>${fmtBR(r.densidadeDia)}</td>
         <td><strong>${fmtBR(r.volDia)}</strong></td>
         <td>${fmtBR(r.volAcc)}</td>
@@ -912,9 +1083,9 @@
       <tr>
         <td class="center">TOTAL</td>
         <td class="center">${parametros.diasTotais} dias</td>
-        <td>${fmtBR(parametros.estacaIni)}</td>
-        <td>${fmtBR(parametros.estacaFim)}</td>
-        <td>${fmtBR(parametros.avancoTotal)}</td>
+        <td>${fmtBR(parametros.estacaIni, 0)}</td>
+        <td>${fmtBR(parametros.estacaFim, 0)}</td>
+        <td>${fmtBR(parametros.avancoTotal, 0)}</td>
         <td>${fmtBR(parametros.relacaoMediaMetro)}</td>
         <td>${fmtBR(parametros.volumeTotal)}</td>
         <td>${fmtBR(parametros.volumeTotal)}</td>
@@ -924,8 +1095,16 @@
   }
 
   async function exportarParaExcel() {
+    if (typeof ExcelJS === 'undefined') {
+      alert('Não foi possível carregar o gerador de Excel. Verifique sua conexão com a internet e recarregue a página.');
+      return;
+    }
+
     const { registros, parametros } = estadoAtual;
-    if (!registros || !registros.length) return;
+    if (!registros || !registros.length || !parametros) return;
+
+    // Garante que o Mês/Ano mais recente digitado vá para a planilha mesmo sem novo sorteio
+    parametros.mesAno = document.getElementById('mesAno').value.trim() || parametros.mesAno;
 
     const wb = new ExcelJS.Workbook();
     wb.creator = 'Sistema de Distribuição de Dragagem';
@@ -949,29 +1128,31 @@
 
     // ABA 1: Parâmetros e Resumo
     const ws1 = wb.addWorksheet('Parâmetros e Resumo', { views: [{ showGridLines: true }] });
-    ws1.mergeCells('A1:E1');
+    ws1.mergeCells('A1:D1');
     ws1.getCell('A1').value = 'SISTEMA DE DISTRIBUIÇÃO DIÁRIA DE DRAGAGEM';
     ws1.getCell('A1').font = fontTitle;
 
-    ws1.mergeCells('A3:C3');
+    ws1.mergeCells('A3:B3');
     ws1.getCell('A3').value = 'PARÂMETROS DA OPERAÇÃO';
     ws1.getCell('A3').font = fontHeader;
     ws1.getCell('A3').fill = navyFill;
     ws1.getCell('A3').alignment = { horizontal: 'center', vertical: 'middle' };
+    ws1.getRow(3).height = 24;
 
     const listaParams = [
       ['Mês/Ano de Referência', parametros.mesAno, null],
       ['Data Inicial da Operação', formatarDataBR(parametros.dtIni), null],
       ['Data Final da Operação', formatarDataBR(parametros.dtFim), null],
       ['Volume Total Retirado (m³)', parametros.volumeTotal, '#,##0.00'],
-      ['Estaca Inicial (m)', parametros.estacaIni, '#,##0.00'],
-      ['Estaca Final (m)', parametros.estacaFim, '#,##0.00'],
+      ['Espaçamento das Estacas (m)', parametros.passo, '#,##0'],
+      ['Estaca Inicial (m)', parametros.estacaIni, '#,##0'],
+      ['Estaca Final (m)', parametros.estacaFim, '#,##0'],
       ['Dias Operacionais', parametros.diasTotais, '#,##0'],
       ['Meta Diária Média (m³)', Number(parametros.volMedioDia.toFixed(2)), '#,##0.00'],
-      ['Avanço Total no Canal (m)', parametros.avancoTotal, '#,##0.00'],
+      ['Avanço Total no Canal (m)', parametros.avancoTotal, '#,##0'],
       ['Relação Média no Canal (m³/m)', Number(parametros.relacaoMediaMetro.toFixed(2)), '#,##0.00'],
       ['Modo de Sorteio Utilizado', parametros.modoTexto, null],
-      ['Intervalo Configurado (Mín a Máx)', `${fmtBR(parametros.limMin)} a ${fmtBR(parametros.limMax)}`, null]
+      ['Intervalo Configurado (Mín a Máx)', `${fmtBR(parametros.limMin)} a ${fmtBR(parametros.limMax)} ${parametros.unidadeLimite}`, null]
     ];
 
     listaParams.forEach((item, idx) => {
@@ -989,9 +1170,9 @@
     });
 
     ws1.getColumn(1).width = 34;
-    ws1.getColumn(2).width = 32;
+    ws1.getColumn(2).width = 36;
 
-    // ABA 2: Distribuição Diária (com Fórmulas Nativas do Excel)
+    // ABA 2: Distribuição Diária
     const ws2 = wb.addWorksheet('Distribuição Diária', { views: [{ showGridLines: true }] });
     ws2.mergeCells('A1:I1');
     ws2.getCell('A1').value = 'RELATÓRIO DE DISTRIBUIÇÃO DIÁRIA DE DRAGAGEM NO CANAL';
@@ -1016,6 +1197,7 @@
       cell.fill = navyFill;
       cell.alignment = { horizontal: 'center', vertical: 'middle' };
     });
+    ws2.getRow(3).height = 24;
 
     const linhaTotal = registros.length + 4;
     const opSinal = parametros.sentido >= 0 ? '+' : '-';
@@ -1028,31 +1210,25 @@
       ws2.getCell(r, 2).value = row.data;
       ws2.getCell(r, 2).alignment = { horizontal: 'center' };
 
-      // Estaca Inicial: no 1º dia é valor fixo, nos seguintes puxa a Estaca Final do dia anterior (=D4)
       if (idx === 0) {
         ws2.getCell(r, 3).value = row.estacaIni;
       } else {
         ws2.getCell(r, 3).value = { formula: `D${r - 1}`, result: row.estacaIni };
       }
-      ws2.getCell(r, 3).numFmt = '#,##0.00';
+      ws2.getCell(r, 3).numFmt = '#,##0';
 
-      // Estaca Final: =C4+E4 (ou C4-E4 se decrescente)
       ws2.getCell(r, 4).value = { formula: `C${r}${opSinal}E${r}`, result: row.estacaFim };
-      ws2.getCell(r, 4).numFmt = '#,##0.00';
+      ws2.getCell(r, 4).numFmt = '#,##0';
 
-      // Avanço Diário Sorteado
       ws2.getCell(r, 5).value = row.avancoDia;
-      ws2.getCell(r, 5).numFmt = '#,##0.00';
+      ws2.getCell(r, 5).numFmt = '#,##0';
 
-      // Volume por Metro: =IF(E4>0, G4/E4, 0)
       ws2.getCell(r, 6).value = { formula: `IF(E${r}>0,G${r}/E${r},0)`, result: row.densidadeDia };
       ws2.getCell(r, 6).numFmt = '#,##0.00';
 
-      // Volume Diário Sorteado
       ws2.getCell(r, 7).value = row.volDia;
       ws2.getCell(r, 7).numFmt = '#,##0.00';
 
-      // Volume Acumulado: =G4 no 1º dia, =H4+G5 nos demais
       if (idx === 0) {
         ws2.getCell(r, 8).value = { formula: `G${r}`, result: row.volAcc };
       } else {
@@ -1060,7 +1236,6 @@
       }
       ws2.getCell(r, 8).numFmt = '#,##0.00';
 
-      // % Concluído: =H4/$G$LinhaTotal
       ws2.getCell(r, 9).value = {
         formula: `H${r}/$G$${linhaTotal}`,
         result: Number((row.volAcc / parametros.volumeTotal).toFixed(4))
@@ -1075,7 +1250,6 @@
       }
     });
 
-    // Linha de Totalização com Fórmulas
     const ultLinhaDados = linhaTotal - 1;
     ws2.getCell(linhaTotal, 1).value = 'TOTAL';
     ws2.getCell(linhaTotal, 1).alignment = { horizontal: 'center' };
@@ -1084,16 +1258,16 @@
     ws2.getCell(linhaTotal, 2).alignment = { horizontal: 'center' };
 
     ws2.getCell(linhaTotal, 3).value = { formula: 'C4', result: parametros.estacaIni };
-    ws2.getCell(linhaTotal, 3).numFmt = '#,##0.00';
+    ws2.getCell(linhaTotal, 3).numFmt = '#,##0';
 
     ws2.getCell(linhaTotal, 4).value = { formula: `D${ultLinhaDados}`, result: parametros.estacaFim };
-    ws2.getCell(linhaTotal, 4).numFmt = '#,##0.00';
+    ws2.getCell(linhaTotal, 4).numFmt = '#,##0';
 
     ws2.getCell(linhaTotal, 5).value = { formula: `SUM(E4:E${ultLinhaDados})`, result: parametros.avancoTotal };
-    ws2.getCell(linhaTotal, 5).numFmt = '#,##0.00';
+    ws2.getCell(linhaTotal, 5).numFmt = '#,##0';
 
     ws2.getCell(linhaTotal, 6).value = {
-      formula: `G${linhaTotal}/E${linhaTotal}`,
+      formula: `IF(E${linhaTotal}>0,G${linhaTotal}/E${linhaTotal},0)`,
       result: Number(parametros.relacaoMediaMetro.toFixed(2))
     };
     ws2.getCell(linhaTotal, 6).numFmt = '#,##0.00';
@@ -1135,7 +1309,6 @@
     URL.revokeObjectURL(url);
   }
 
-  // Eventos da Interface
   document.querySelectorAll('input[name="modoSorteio"]').forEach(radio => {
     radio.addEventListener('change', () => {
       atualizarTextosEInterface(true);
@@ -1143,18 +1316,24 @@
     });
   });
 
-  ['dataInicio', 'dataFim', 'volumeTotal', 'estacaInicial', 'estacaFinal'].forEach(id => {
+  ['dataInicio', 'dataFim', 'volumeTotal', 'estacaInicial', 'estacaFinal', 'intervaloEstaca'].forEach(id => {
     document.getElementById(id).addEventListener('change', () => {
       atualizarTextosEInterface(true);
       gerarDistribuicao();
     });
   });
 
-  ['mesAno', 'limiteMin', 'limiteMax', 'variacaoEstaca'].forEach(id => {
+  ['limiteMin', 'limiteMax', 'variacaoEstaca'].forEach(id => {
     document.getElementById(id).addEventListener('change', () => {
       atualizarTextosEInterface(false);
       gerarDistribuicao();
     });
+  });
+
+  document.getElementById('mesAno').addEventListener('change', () => {
+    if (estadoAtual.parametros) {
+      estadoAtual.parametros.mesAno = document.getElementById('mesAno').value.trim() || 'Outubro / 2026';
+    }
   });
 
   document.getElementById('btnAutoLimites').addEventListener('click', () => {
@@ -1170,7 +1349,6 @@
     exportarParaExcel();
   });
 
-  // Inicialização ao abrir a página
   window.addEventListener('DOMContentLoaded', () => {
     atualizarTextosEInterface(true);
     gerarDistribuicao();
